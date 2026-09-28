@@ -16,7 +16,9 @@ return new class extends Migration
             $table->string('Requisitos', 150);
             $table->string('Empresa', 45);
             $table->string('Atuacao', 45);
+ 
         });
+
     }
 
     public function down(): void
@@ -24,3 +26,5 @@ return new class extends Migration
         Schema::dropIfExists('vagas');
     }
 };
+
+

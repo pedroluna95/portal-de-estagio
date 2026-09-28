@@ -1,4 +1,4 @@
-🚀 Guia — Rodar o projeto pela primeira vez em outro PC
+Guia — Rodar o projeto pela primeira vez em outro PC
 
 1. Instalar o necessário
 No PC novo, instale:
