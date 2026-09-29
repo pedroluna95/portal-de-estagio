@@ -17,16 +17,25 @@ return new class extends Migration
             $table->string('Nome', 60);
             $table->string('Email', 45)->unique();
             $table->string('Senha', 255);
-            $table->string('atribuicao', 45)->nullable();
-        });
+
+            $table->unsignedInteger('atribuicao_id')->nullable();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable();
+
+            $table->foreign('atribuicao_id')
+                ->references('Atribuicao_ID')
+                ->on('atribuicoes')
+                ->onDelete('set null');
+});
 
         // Administrador padrão
         DB::table('usuarios')->insert([
-            'cpf' => null,
+            'cpf' => '000.000.000-00',
             'Nome' => 'Administrador',
             'Email' => 'admin@admin.com',
             'Senha' => Hash::make('cefet123'),
-            'atribuicao' => null,
+            'atribuicao_id' => 1,
+            'created_at' => now(),
         ]);
     }
 

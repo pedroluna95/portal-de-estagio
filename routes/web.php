@@ -26,13 +26,15 @@ Route::post('/login', function (Request $request) {
         return back()->withErrors(['email' => 'E-mail ou senha inválidos.'])->withInput($request->only('email'));
     }
 
+    $tipo = $user->tipo;
+
     $request->session()->regenerate();
     $request->session()->put([
         'usuario_id' => $user->user_ID,
         'user_id' => $user->user_ID,
         'usuario_nome' => $user->Nome,
         'user_name' => $user->Nome,
-        'user_type' => $user->atribuicao ?? 'aluno',
+        'user_type' => $tipo,
         'user_email' => $user->Email,
         'user_cpf' => $user->cpf ?? '',
         'user_matricula' => $user->matricula ?? '',
@@ -60,6 +62,7 @@ Route::post('/cadastro', function (Request $request) use ($tiposCadastro) {
         'confirmar_senha' => ['required', 'string'],
         'tipo' => ['required', Rule::in($tiposCadastro)],
         'matricula' => [$tipo === 'aluno' ? 'required' : 'nullable', 'string', 'max:60'],
+        'curso' => [$tipo === 'aluno' ? 'required' : 'nullable', 'in:Informatica,Automacao Industrial,Telecomunicações,Enfermagem'],
         'siape' => [$tipo === 'orientador' ? 'required' : 'nullable', 'digits:8'],
     ], [
         'senha.same' => 'A confirmação de senha não confere.',

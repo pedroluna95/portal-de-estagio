@@ -20,8 +20,7 @@ return new class extends Migration
 
             $table->string('siape', 20)->unique();
             $table->string('area', 100)->nullable();
-            $table->string('departamento', 100)->nullable();
-
+            
             $table->timestamps();
         });
     }

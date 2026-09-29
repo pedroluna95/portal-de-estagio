@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 class TablesController
 {
     private const TABLES = [
-        'usuarios' => ['user_ID', 'Nome', 'Email', 'atribuicao', 'cpf', 'matricula', 'siape'],
+        'usuarios' => ['user_ID', 'Nome', 'Email', 'atribuicao_id', 'cpf', 'matricula', 'siape'],
         'vagas' => ['id', 'titulo', 'descricao'],
     ];
 

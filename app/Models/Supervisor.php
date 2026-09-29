@@ -4,6 +4,8 @@ namespace App\Models;
 
 class Supervisor extends Usuario
 {
-    // Supervisores usam a mesma tabela; não usam SIAPE por requisito
-    protected $fillable = ['Nome', 'Email', 'Senha', 'cpf', 'atribuicao', 'matricula', 'siape'];
+    protected $table = 'supervisores';
+    protected $primaryKey = 'supervisor_ID';
+    public $timestamps = true;
+    protected $fillable = ['user_ID', 'cargo', 'empresa'];
 }

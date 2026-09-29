@@ -24,7 +24,7 @@
 
         <div class="bg-white rounded-2xl shadow-xl p-8">
             {{-- Passo 1: Seleção de tipo --}}
-            <div id="passo-tipo" class="grid grid-cols-1 md:grid-cols-2 gap-4 {{ $errors->any() || !empty($tipoInicial) ? 'hidden' : '' }}">
+            <div id="passo-tipo" class="grid grid-cols-1 md:grid-cols-1 gap-4 {{ $errors->any() || !empty($tipoInicial) ? 'hidden' : '' }}">
                 <a href="?tipo=aluno" onclick="selecionarTipo('aluno'); return false;" class="p-6 border-2 border-gray-200 rounded-xl hover:border-[#0077fc] hover:bg-blue-50 transition-all text-left group block">
                     <div class="flex items-start gap-4">
                         <div class="p-3 bg-blue-50 group-hover:bg-[#0077fc] rounded-lg transition-colors">
@@ -57,18 +57,6 @@
                         <div>
                             <h3 class="font-semibold text-lg mb-1">Orientador</h3>
                             <p class="text-sm text-gray-600">Professor orientador do CEFET</p>
-                        </div>
-                    </div>
-                </a>
-
-                <a href="?tipo=contratante" onclick="selecionarTipo('contratante'); return false;" class="p-6 border-2 border-gray-200 rounded-xl hover:border-[#0077fc] hover:bg-blue-50 transition-all text-left group block">
-                    <div class="flex items-start gap-4">
-                        <div class="p-3 bg-blue-50 group-hover:bg-[#0077fc] rounded-lg transition-colors">
-                            <span class="material-symbols-outlined text-[#0077fc] group-hover:text-white">business</span>
-                        </div>
-                        <div>
-                            <h3 class="font-semibold text-lg mb-1">Contratante</h3>
-                            <p class="text-sm text-gray-600">Empresa parceira</p>
                         </div>
                     </div>
                 </a>
@@ -140,9 +128,21 @@
 <script>
     const camposEspecificos = {
         aluno: `
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Matrícula</label>
-                <input type="text" name="matricula" placeholder="Digite sua matrícula" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077fc] focus:border-transparent outline-none" required/>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Matrícula</label>
+                    <input type="text" name="matricula" placeholder="Digite sua matrícula" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077fc] focus:border-transparent outline-none" required/>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Curso</label>
+                    <select name="curso" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077fc] focus:border-transparent outline-none bg-white" required>
+                        <option value="">Selecione o curso</option>
+                        <option value="Informatica" {{ old('curso') === 'Informatica' ? 'selected' : '' }}>Informática</option>
+                        <option value="Automacao Industrial" {{ old('curso') === 'Automacao Industrial' ? 'selected' : '' }}>Automação Industrial</option>
+                        <option value="Telecomunicações" {{ old('curso') === 'Telecomunicações' ? 'selected' : '' }}>Telecomunicações</option>
+                        <option value="Enfermagem" {{ old('curso') === 'Enfermagem' ? 'selected' : '' }}>Enfermagem</option>
+                    </select>
+                </div>
             </div>
         `,
         orientador: `
@@ -196,10 +196,17 @@
 
         if (tipo === 'aluno') {
             const matricula = document.querySelector('input[name="matricula"]');
+            const curso = document.querySelector('select[name="curso"]');
             if (!matricula || !matricula.value.trim()) {
                 e.preventDefault();
                 alert('Aluno deve informar a matrícula obrigatoriamente.');
                 matricula?.focus();
+                return;
+            }
+            if (!curso || !curso.value) {
+                e.preventDefault();
+                alert('Aluno deve selecionar o curso obrigatoriamente.');
+                curso?.focus();
             }
         }
 

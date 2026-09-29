@@ -23,9 +23,10 @@ class AdminMiddleware
             return redirect('/login');
         }
 
-        // garantir que a sessão tenha o tipo de usuário e dados para uso nas views
+        $tipo = strtolower((string) $user->tipo);
+
         if (! $request->session()->has('user_type')) {
-            $request->session()->put('user_type', $user->atribuicao ?? 'aluno');
+            $request->session()->put('user_type', $tipo);
         }
         if (! $request->session()->has('user_id')) {
             $request->session()->put('user_id', $user->user_ID);
@@ -34,7 +35,7 @@ class AdminMiddleware
             $request->session()->put('user_name', $user->Nome);
         }
 
-        if (strtolower($user->atribuicao) !== 'administrador') {
+        if ($tipo !== 'administrador') {
             abort(403, 'Acesso negado: apenas administradores.');
         }
 

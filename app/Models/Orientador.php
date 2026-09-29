@@ -4,7 +4,8 @@ namespace App\Models;
 
 class Orientador extends Usuario
 {
-    // Usa a mesma tabela `usuarios` herdada de Usuario
-    // Define campos específicos que podem ser preenchidos para o tipo Orientador
-    protected $fillable = ['Nome', 'Email', 'Senha', 'cpf', 'atribuicao', 'siape', 'matricula'];
+    protected $table = 'orientadores';
+    protected $primaryKey = 'orientador_ID';
+    public $timestamps = true;
+    protected $fillable = ['user_ID', 'siape', 'area'];
 }

@@ -8,21 +8,25 @@ return new class extends Migration
 {
     public function up(): void
     {
+        Schema::dropIfExists('alunos');
+
         Schema::create('alunos', function (Blueprint $table) {
-            $table->increments('aluno_ID');
+            $table->unsignedInteger('user_id')->primary();
+            $table->string('nome', 60);
+            $table->string('curso', 100);
+            $table->string('matricula', 30)->unique();
+            $table->unsignedInteger('orientador')->nullable();
+            $table->timestamps();
 
-            $table->unsignedInteger('user_ID')->unique();
-
-            $table->foreign('user_ID')
+            $table->foreign('user_id')
                 ->references('user_ID')
                 ->on('usuarios')
                 ->onDelete('cascade');
 
-            $table->string('matricula', 30)->unique();
-            $table->string('curso', 100)->nullable();
-            $table->string('periodo', 20)->nullable();
-
-            $table->timestamps();
+            $table->foreign('orientador')
+                ->references('user_ID')
+                ->on('usuarios')
+                ->onDelete('set null');
         });
     }
 
