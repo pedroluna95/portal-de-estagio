@@ -2,7 +2,7 @@
 
 @section('content')
 {{-- Dashboard — orquestador por perfil, igual ao Figma --}}
-@php $tipo = session('user_type', 'aluno'); @endphp
+@php $tipo = $papelDashboard ?? session('user_type', 'aluno'); @endphp
 
 @if($tipo === 'aluno')
 @include('partials.dashboard-aluno')

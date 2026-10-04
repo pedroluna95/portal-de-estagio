@@ -9,7 +9,11 @@ use App\Models\Supervisor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Database\QueryException;
 use Illuminate\Validation\Rule;
+use App\Rules\ValidarCpf;
+
 
 class UsuarioController
 {
@@ -17,38 +21,44 @@ class UsuarioController
 
     public function index(Request $request)
     {
-        $query = Usuario::query();
+        try {
+            $query = Usuario::query();
 
-        if ($tipo = strtolower(trim((string) $request->query('tipo')))) {
-            $atribuicaoId = DB::table('atribuicoes')
-                ->whereRaw('LOWER(Nome_atribuicao) = ?', [$tipo])
-                ->value('Atribuicao_ID');
+            if ($tipo = strtolower(trim((string) $request->query('tipo')))) {
+                $atribuicaoId = DB::table('atribuicoes')
+                    ->whereRaw('LOWER(Nome_atribuicao) = ?', [$tipo])
+                    ->value('Atribuicao_ID');
 
-            if ($atribuicaoId) {
-                $query->where('atribuicao_id', $atribuicaoId);
+                if ($atribuicaoId) {
+                    $query->where('atribuicao_id', $atribuicaoId);
+                }
             }
-        }
 
-        if ($q = trim((string) $request->query('q'))) {
-            $query->where(function ($qb) use ($q) {
-                $qb->where('Nome', 'like', "%{$q}%")
-                    ->orWhere('Email', 'like', "%{$q}%")
-                    ->orWhere('cpf', 'like', "%{$q}%");
-            });
-        }
+            if ($q = trim((string) $request->query('q'))) {
+                $query->where(function ($qb) use ($q) {
+                    $qb->where('Nome', 'like', "%{$q}%")
+                        ->orWhere('Email', 'like', "%{$q}%")
+                        ->orWhere('cpf', 'like', "%{$q}%");
+                });
+            }
 
-        return response()->json(
-            $query->orderByDesc('user_ID')->get()
-        );
+            return response()->json($query->orderByDesc('user_ID')->get());
+        } catch (\Throwable $e) {
+            return $this->error('Não foi possível carregar a lista de usuários.', 500, $e);
+        }
     }
 
     public function show($id)
     {
-        $usuario = Usuario::find($id);
+        try {
+            $usuario = Usuario::find($id);
 
-        return $usuario
-            ? response()->json($usuario)
-            : $this->error('Usuário não encontrado.', 404);
+            return $usuario
+                ? response()->json($usuario)
+                : $this->error('Usuário não encontrado.', 404);
+        } catch (\Throwable $e) {
+            return $this->error('Não foi possível carregar os dados do usuário.', 500, $e);
+        }
     }
 
     public function store(Request $request)
@@ -82,8 +92,10 @@ class UsuarioController
                 switch ($data['tipo']) {
                     case 'aluno':
                         Aluno::create([
-                            'user_ID' => $usuario->user_ID,
+                            'user_id' => $usuario->user_ID,
+                            'nome' => $usuario->Nome,
                             'matricula' => $data['matricula'],
+                            'curso' => $data['curso'],
                         ]);
                         break;
 
@@ -117,7 +129,7 @@ class UsuarioController
 
         } catch (\Throwable $e) {
             return $this->error(
-                'Não foi possível salvar o usuário.',
+                'Não foi possível cadastrar o usuário.',
                 500,
                 $e
             );
@@ -150,10 +162,24 @@ class UsuarioController
             'nome' => ['sometimes','required','string','max:60'],
             'email' => ['sometimes','required','email','max:45', Rule::unique('usuarios','Email')->ignore($usuario->user_ID,'user_ID')],
             'senha' => ['sometimes','nullable','string','min:6'],
-            'cpf' => ['sometimes','nullable','string','cpf_valido'],
+            'cpf' => ['sometimes','nullable','string',new ValidarCpf,Rule::unique('usuarios', 'cpf')->ignore($usuario->user_ID, 'user_ID')],
             'tipo' => ['sometimes','required', Rule::in(self::TIPOS)],
-            'matricula' => ['sometimes','nullable','string','max:60'],
-            'siape' => ['sometimes','nullable','digits:8'],
+            'matricula' => ['sometimes','nullable','string','max:30', Rule::unique('alunos', 'matricula')->ignore($usuario->user_ID, 'user_id')],
+            'curso' => ['sometimes','required_if:tipo,aluno','nullable','string',Rule::in(['Informatica', 'Automacao Industrial', 'Telecomunicações', 'Enfermagem'])],
+            'siape' => ['sometimes','nullable','digits:8', Rule::unique('orientadores', 'siape')->ignore($usuario->user_ID, 'user_ID')],
+        ], [
+            'nome.required' => 'Informe o nome do usuário.',
+            'nome.max' => 'O nome deve ter no máximo 60 caracteres.',
+            'email.required' => 'Informe o e-mail do usuário.',
+            'email.email' => 'Informe um endereço de e-mail válido.',
+            'email.unique' => 'Este e-mail já está cadastrado.',
+            'senha.min' => 'A senha deve ter pelo menos 6 caracteres.',
+            'cpf.unique' => 'Este CPF já está cadastrado.',
+            'tipo.in' => 'Selecione um tipo de usuário válido.',
+            'matricula.required_if' => 'Informe a matrícula do aluno.',
+            'curso.required_if' => 'Selecione o curso do aluno.',
+            'curso.in' => 'Selecione um dos cursos disponíveis.',
+            'siape.digits' => 'O SIAPE deve conter exatamente 8 dígitos.',
         ]);
 
         $tipoNovo = strtolower((string) ($data['tipo'] ?? $tipoAtual));
@@ -168,6 +194,19 @@ class UsuarioController
                 422,
                 null,
                 ['matricula' => ['Informe a matrícula.']]
+            );
+        }
+
+        if (
+            $tipoNovo === 'aluno' &&
+            array_key_exists('tipo', $data) &&
+            blank($data['curso'] ?? null)
+        ) {
+            return $this->error(
+                'Selecione o curso do aluno.',
+                422,
+                null,
+                ['curso' => ['Selecione um dos cursos disponíveis.']]
             );
         }
 
@@ -217,9 +256,14 @@ class UsuarioController
                 $usuario->save();
 
                 if ($tipoNovo === 'aluno') {
+                    $alunoExistente = Aluno::where('user_id', $usuario->user_ID)->first();
                     Aluno::updateOrCreate(
-                        ['user_ID' => $usuario->user_ID],
-                        ['matricula' => $data['matricula'] ?? null]
+                        ['user_id' => $usuario->user_ID],
+                        [
+                            'nome' => $usuario->Nome,
+                            'matricula' => $data['matricula'] ?? $alunoExistente?->getRawOriginal('matricula'),
+                            'curso' => $data['curso'] ?? $alunoExistente?->getRawOriginal('curso'),
+                        ]
                     );
 
                     Orientador::where('user_ID', $usuario->user_ID)->delete();
@@ -232,19 +276,19 @@ class UsuarioController
                         ['siape' => $data['siape'] ?? null]
                     );
 
-                    Aluno::where('user_ID', $usuario->user_ID)->delete();
+                    Aluno::where('user_id', $usuario->user_ID)->delete();
                     Supervisor::where('user_ID', $usuario->user_ID)->delete();
                     \App\Models\Contratante::where('user_ID', $usuario->user_ID)->delete();
                 }
                 elseif ($tipoNovo === 'supervisor') {
                     Supervisor::updateOrCreate(['user_ID' => $usuario->user_ID]);
-                    Aluno::where('user_ID', $usuario->user_ID)->delete();
+                    Aluno::where('user_id', $usuario->user_ID)->delete();
                     Orientador::where('user_ID', $usuario->user_ID)->delete();
                     \App\Models\Contratante::where('user_ID', $usuario->user_ID)->delete();
                 }
                 elseif ($tipoNovo === 'contratante') {
                     \App\Models\Contratante::updateOrCreate(['user_ID' => $usuario->user_ID]);
-                    Aluno::where('user_ID', $usuario->user_ID)->delete();
+                    Aluno::where('user_id', $usuario->user_ID)->delete();
                     Orientador::where('user_ID', $usuario->user_ID)->delete();
                     Supervisor::where('user_ID', $usuario->user_ID)->delete();
                 }
@@ -263,6 +307,7 @@ class UsuarioController
 
     public function destroy(Request $request, $id)
     {
+        try {
         $usuario = Usuario::find($id);
 
         if (!$usuario) {
@@ -311,6 +356,9 @@ class UsuarioController
         return response()->json([
             'message' => 'Usuário excluído.'
         ]);
+        } catch (\Throwable $e) {
+            return $this->error('Não foi possível excluir o usuário.', 500, $e);
+        }
     }
 
     private function validated(Request $request): array
@@ -338,8 +386,10 @@ class UsuarioController
             'cpf' => [
                 'required',
                 'string',
-                'cpf_valido'
+                'unique:usuarios,cpf',
+                new ValidarCpf,
             ],
+
 
             'tipo' => [
                 'required',
@@ -348,39 +398,45 @@ class UsuarioController
 
             'matricula' => [
                 'nullable',
+                'required_if:tipo,aluno',
                 'string',
-                'max:60'
+                'max:30',
+                Rule::unique('alunos', 'matricula')
+            ],
+
+            'curso' => [
+                'nullable',
+                'required_if:tipo,aluno',
+                'string',
+                Rule::in(['Informatica', 'Automacao Industrial', 'Telecomunicações', 'Enfermagem'])
             ],
 
             'siape' => [
                 'nullable',
-                'digits:8'
+                'required_if:tipo,orientador',
+                'digits:8',
+                Rule::unique('orientadores', 'siape')
             ],
+        ], [
+            'nome.required' => 'Informe o nome do usuário.',
+            'nome.max' => 'O nome deve ter no máximo 60 caracteres.',
+            'email.required' => 'Informe o e-mail do usuário.',
+            'email.email' => 'Informe um endereço de e-mail válido.',
+            'email.unique' => 'Este e-mail já está cadastrado.',
+            'senha.required' => 'Informe uma senha.',
+            'senha.min' => 'A senha deve ter pelo menos 6 caracteres.',
+            'cpf.required' => 'Informe o CPF do usuário.',
+            'cpf.unique' => 'Este CPF já está cadastrado.',
+            'tipo.in' => 'Selecione um tipo de usuário válido.',
+            'matricula.required_if' => 'Informe a matrícula do aluno.',
+            'matricula.max' => 'A matrícula deve ter no máximo 30 caracteres.',
+            'matricula.unique' => 'Esta matrícula já está cadastrada.',
+            'curso.required_if' => 'Selecione o curso do aluno.',
+            'curso.in' => 'Selecione um dos cursos disponíveis.',
+            'siape.required_if' => 'Informe o SIAPE do orientador.',
+            'siape.digits' => 'O SIAPE deve conter exatamente 8 dígitos.',
+            'siape.unique' => 'Este SIAPE já está cadastrado.',
         ]);
-
-        if (
-            $data['tipo'] === 'aluno'
-            && blank($data['matricula'] ?? null)
-        ) {
-            $request->validate([
-                'matricula' => [
-                    'required',
-                    'string'
-                ]
-            ]);
-        }
-
-        if (
-            $data['tipo'] === 'orientador'
-            && blank($data['siape'] ?? null)
-        ) {
-            $request->validate([
-                'siape' => [
-                    'required',
-                    'digits:8'
-                ]
-            ]);
-        }
 
         return $data;
     }
@@ -394,10 +450,12 @@ class UsuarioController
         $requestId = (string) str()->uuid();
 
         if ($exception) {
-            \Log::error($message, [
+            $message = $this->describeException($message, $exception);
+            Log::error($message, [
                 'request_id' => $requestId,
                 'exception' => $exception
             ]);
+            $message .= " Tente novamente. Código de atendimento: {$requestId}";
         }
 
         return response()->json([
@@ -405,5 +463,20 @@ class UsuarioController
             'errors' => $errors,
             'request_id' => $requestId
         ], $status);
+    }
+
+    private function describeException(string $fallback, \Throwable $exception): string
+    {
+        if (! $exception instanceof QueryException) {
+            return $fallback;
+        }
+
+        return match ((int) ($exception->errorInfo[1] ?? 0)) {
+            1062 => 'Já existe um cadastro usando este e-mail, CPF, matrícula ou SIAPE.',
+            1048, 1364 => 'Faltam dados obrigatórios para o tipo de usuário selecionado.',
+            1452 => 'Não foi possível vincular o usuário porque uma referência relacionada não existe.',
+            2002, 2006, 2013 => 'O banco de dados está indisponível no momento.',
+            default => $fallback,
+        };
     }
 }

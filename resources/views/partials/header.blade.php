@@ -18,6 +18,10 @@
                     <a href="/tutorial" class="text-gray-700 hover:text-[#0077fc] transition-colors">Tutorial</a>
                     <a href="/vagas" class="text-gray-700 hover:text-[#0077fc] transition-colors">Vagas</a>
                     <a href="/controle-horas" class="text-gray-700 hover:text-[#0077fc] transition-colors">Controle de Horas</a>
+                @elseif(session('user_type') === 'orientador')
+                    <a href="/estagios" class="text-gray-700 hover:text-[#0077fc] transition-colors">Meus estágios</a>
+                @elseif(session('user_type') === 'supervisor')
+                    <a href="/estagios" class="text-gray-700 hover:text-[#0077fc] transition-colors">Validar presenças</a>
                 @endif
                 <a href="/empresas" class="text-gray-700 hover:text-[#0077fc] transition-colors">Empresas</a>
             </nav>
@@ -58,6 +62,10 @@
                     <a href="/tutorial" class="px-4 py-2 rounded-lg hover:bg-gray-100">Tutorial</a>
                     <a href="/vagas" class="px-4 py-2 rounded-lg hover:bg-gray-100">Vagas</a>
                     <a href="/controle-horas" class="px-4 py-2 rounded-lg hover:bg-gray-100">Controle de Horas</a>
+                @elseif(session('user_type') === 'orientador')
+                    <a href="/estagios" class="px-4 py-2 rounded-lg hover:bg-gray-100">Meus estágios</a>
+                @elseif(session('user_type') === 'supervisor')
+                    <a href="/estagios" class="px-4 py-2 rounded-lg hover:bg-gray-100">Validar presenças</a>
                 @endif
                 <a href="/empresas" class="px-4 py-2 rounded-lg hover:bg-gray-100">Empresas</a>
                 <a href="/perfil" class="px-4 py-2 rounded-lg hover:bg-gray-100">Meu Perfil</a>

@@ -1,124 +1,225 @@
-Guia — Rodar o projeto pela primeira vez em outro PC
+# Guia — Rodar o projeto pela primeira vez em outro PC
 
-1. Instalar o necessário
+## 1. Instalar o necessário
+
 No PC novo, instale:
 
-* Docker Desktop
-* Git
+* **Docker Desktop**
+* **Git**
 
-Não precisa instalar XAMPP, PHP, Composer, MySQL ou Node.js no Windows, porque eles ficam dentro dos containers.
+Não precisa instalar **XAMPP, PHP, Composer, MySQL ou Node.js** no Windows, porque eles serão executados dentro dos containers Docker.
 
-2. Baixar o projeto
+---
+
+## 2. Baixar o projeto
+
 Abra o PowerShell e faça:
 
-
+```bash
 git clone URL_DO_SEU_REPOSITORIO
+```
 
-Entre na pasta:
+Entre na pasta do projeto:
 
+```bash
 cd PROJETO-FINAL-2026
+```
 
+---
 
-3. Criar o `.env`
-Se o `.env` não estiver no GitHub, copie o `.env.example`:
+## 3. Criar o `.env`
 
+Se o arquivo `.env` não estiver no GitHub, copie o `.env.example`:
+
+```powershell
 copy .env.example .env
+```
 
-Depois verifique se tem as seguintes configurações do banco no `.env`:
+Abra o `.env` e verifique se o banco está configurado assim:
 
+```env
 DB_CONNECTION=mysql
 DB_HOST=db
 DB_PORT=3306
 DB_DATABASE=projeto
 DB_USERNAME=root
 DB_PASSWORD=root
+```
 
+> **Importante:** dentro do Docker, o `DB_HOST` deve ser `db`, e não `127.0.0.1` ou `localhost`.
 
-4. Criar e iniciar os containers
+---
 
+## 4. Criar e iniciar os containers
+
+Execute:
+
+```bash
 docker compose up -d --build
+```
 
-Confira:
+Confira se os containers estão funcionando:
 
+```bash
 docker compose ps
+```
 
-Deve aparecer algo parecido com:
+O `app` e o `db` devem aparecer como **Up**.
 
-projeto-final-2026-app-1    Up
-projeto-final-2026-db-1     Up
+---
 
+## 5. Instalar as dependências do Laravel
 
-5. Instalar as dependências do Laravel
-Como o `vendor` fica dentro do Docker, faça:
+Execute:
 
-docker compose run --rm --entrypoint bash app
+```bash
+docker compose exec app composer install
+```
 
-Dentro do container:
+Isso instala as dependências do `composer.json` dentro do container, incluindo o **Laravel Pail**, caso ele esteja listado no projeto.
+
+Depois gere a chave da aplicação:
+
+```bash
+docker compose exec app php artisan key:generate
+```
+
+Agora rode as migrations:
+
+```bash
+docker compose exec app php artisan migrate
+```
+
+> **Atenção:** se o projeto já possuir um banco/arquivo SQL que precisa ser importado, **não rode o `migrate` antes de importar esse banco**. Nesse caso, importe o banco primeiro.
+
+---
+
+## 6. Instalar as dependências do Node
+
+Execute:
+
+```bash
+docker compose exec app npm install
+```
+
+Isso instala as dependências do `package.json` dentro do container.
+
+---
+
+## 7. Limpar os caches do Laravel
+
+Depois que o Composer estiver instalado, execute:
+
+```bash
+docker compose exec app php artisan optimize:clear
+```
+
+Se aparecer:
+
+```text
+Class "Laravel\Pail\PailServiceProvider" not found
+```
+
+significa que as dependências do Composer não foram instaladas corretamente. Nesse caso, rode novamente:
+
+```bash
+docker compose exec app composer install
+```
+
+e depois:
+
+```bash
+docker compose exec app php artisan optimize:clear
+```
+
+---
+
+## 8. Rodar o projeto
+
+Se o `docker-compose.yml` já estiver configurado para iniciar o servidor Laravel automaticamente, basta acessar:
+
+```text
+http://localhost:8000
+```
+
+Para conferir os containers:
+
+```bash
+docker compose ps
+```
+
+---
+
+# 🔄 Nas próximas vezes
+
+Depois que o projeto já foi configurado uma vez, **não precisa repetir todo o processo**.
+
+Entre na pasta:
+
+```bash
+cd PROJETO-FINAL-2026
+```
+
+Inicie os containers:
+
+```bash
+docker compose up -d
+```
+
+Acesse:
+
+```text
+http://localhost:8000
+```
+
+### Para desligar o projeto:
+
+```bash
+docker compose down
+```
+
+### Para ligar novamente:
+
+```bash
+docker compose up -d
+```
+
+---
+
+## ⚠️ Resumo rápido
+
+### Primeiro uso:
+
+```bash
+git clone URL_DO_SEU_REPOSITORIO
+cd PROJETO-FINAL-2026
+
+copy .env.example .env
 
 composer install
 
-Depois:
-
-php artisan key:generate
-
-E:
-
-php artisan migrate
-
-Se o projeto já tiver um banco/SQL que precisa ser importado, não rode o migrate antes de importar esse banco.
-Saia:
-
-exit
+docker compose up -d --build
 
 
-
-6. Instalar as dependências do Node
-Ainda no PowerShell:
-
-docker compose run --rm --entrypoint bash app
-
-Dentro:
-
-npm install
-
-Depois:
-
-exit
-
-
-
-7. Limpar os caches
-
+docker compose exec app php artisan key:generate
+docker compose exec app php artisan migrate
+docker compose exec app npm install
 docker compose exec app php artisan optimize:clear
+```
 
-8. Rodar o projeto
-Se o seu `docker-compose.yml` já inicia o servidor Laravel automaticamente, basta acessar:
+Depois:
 
+```text
 http://localhost:8000
+```
 
-Para conferir se está funcionando:
+### Próximas vezes:
 
-docker compose ps
-
-
-
-🔄 Nas próximas vezes
-Depois que já configurou o projeto uma vez, não precisa repetir tudo.
-É só:
-
+```bash
 cd PROJETO-FINAL-2026
 docker compose up -d
+```
 
-E acessar:
+E pronto.
 
-http://localhost:8000
-
-Para desligar:
-
-docker compose down
-
-Para ligar novamente:
-
-docker compose up -d
-
-Se tiver duvidas, joga no gpt.
+> Se tiver alguma dúvida ou aparecer algum erro, copie o erro completo e jogue no GPT.

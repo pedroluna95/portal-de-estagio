@@ -19,7 +19,16 @@
                     <option value="contratante">Contratante</option>
                 </select>
                 <div id="matricula-group" class="hidden">
-                    <input name="matricula" id="matricula" placeholder="Matrícula" class="border p-2" maxlength="13" />
+                    <input name="matricula" id="matricula" placeholder="Matrícula" class="border p-2" maxlength="30" />
+                </div>
+                <div id="curso-group" class="hidden">
+                    <select name="curso" id="curso" class="border p-2">
+                        <option value="">Selecione o curso</option>
+                        <option value="Informatica">Informática</option>
+                        <option value="Automacao Industrial">Automação Industrial</option>
+                        <option value="Telecomunicações">Telecomunicações</option>
+                        <option value="Enfermagem">Enfermagem</option>
+                    </select>
                 </div>
                 <div id="siape-group" class="hidden">
                     <input name="siape" id="siape" placeholder="SIAPE (8 dígitos)" inputmode="numeric" pattern="[0-9]*" maxlength="8" oninput="this.value=this.value.replace(/\D/g,'')" class="border p-2" />

@@ -39,5 +39,6 @@
     @include('partials.header')
     @yield('content')
     @includeWhen(!session('user_id'), 'partials.footer')
+    <script src="/js/password-toggle.js?v=1"></script>
 </body>
 </html>

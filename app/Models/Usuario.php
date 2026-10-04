@@ -12,7 +12,7 @@ class Usuario extends Model
     protected $primaryKey = 'user_ID';
     public $timestamps = false;
     protected $fillable = ['Nome', 'Email', 'Senha', 'cpf', 'atribuicao_id'];
-    protected $appends = ['tipo', 'atribuicao', 'matricula', 'siape'];
+    protected $appends = ['tipo', 'atribuicao', 'matricula', 'siape', 'curso'];
 
     public function getTipoAttribute(): string
     {
@@ -31,8 +31,15 @@ class Usuario extends Model
     public function getMatriculaAttribute(): ?string
     {
         return DB::table('alunos')
-            ->where('user_ID', $this->user_ID)
+            ->where('user_id', $this->user_ID)
             ->value('matricula');
+    }
+
+    public function getCursoAttribute(): ?string
+    {
+        return DB::table('alunos')
+            ->where('user_id', $this->user_ID)
+            ->value('curso');
     }
 
     public function getSiapeAttribute(): ?string

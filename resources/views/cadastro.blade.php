@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="/css/style.css?v=3">
+    <script defer src="/js/password-toggle.js?v=1"></script>
 </head>
 <body style="font-family: 'Inter', sans-serif;">
 <div class="min-h-screen fig-gradient flex items-center justify-center p-4 py-12">
@@ -131,7 +132,7 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Matrícula</label>
-                    <input type="text" name="matricula" placeholder="Digite sua matrícula" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077fc] focus:border-transparent outline-none" required/>
+                    <input type="text" name="matricula" placeholder="Digite sua matrícula" maxlength="30" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077fc] focus:border-transparent outline-none" required/>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Curso</label>

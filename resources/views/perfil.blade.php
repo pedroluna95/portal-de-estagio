@@ -26,7 +26,7 @@
                 @unless(session('user_type') === 'administrador')
                 <div class="flex justify-between text-sm">
                     <span class="text-gray-500">Curso</span>
-                    <span class="font-medium text-gray-900">{{ session('user_curso', '—') }}</span>
+                    <span class="font-medium text-gray-900">{{ ['Informatica' => 'Informática', 'Automacao Industrial' => 'Automação Industrial'][$cursoAluno] ?? $cursoAluno ?? '—' }}</span>
                 </div>
                 <div class="flex justify-between text-sm">
                     <span class="text-gray-500">Período</span>

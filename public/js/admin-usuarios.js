@@ -49,8 +49,26 @@ async function fetchAndRenderUsers() {
     if (buscaValue) params.set('q', buscaValue);
     if (tipoValue) params.set('tipo', tipoValue);
 
-    const res = await fetch('/admin/api/usuarios' + (params.toString() ? `?${params.toString()}` : ''));
-    const list = await res.json();
+    let list;
+    try {
+        const res = await fetch('/admin/api/usuarios' + (params.toString() ? `?${params.toString()}` : ''), {
+            headers: { Accept: 'application/json' }
+        });
+        const result = await res.json().catch(() => null);
+        if (!res.ok) throw new Error(result?.message || 'Não foi possível carregar os usuários. Verifique sua conexão e tente novamente.');
+        if (!Array.isArray(result)) throw new Error('O servidor retornou uma resposta inválida ao carregar os usuários.');
+        list = result;
+    } catch (error) {
+        tbody.innerHTML = '';
+        const row = document.createElement('tr');
+        const cell = document.createElement('td');
+        cell.colSpan = 7;
+        cell.className = 'p-4 text-red-700';
+        cell.textContent = error.message || 'Falha de conexão ao carregar os usuários.';
+        row.appendChild(cell);
+        tbody.appendChild(row);
+        return;
+    }
     if (!Array.isArray(list) || list.length === 0) {
         tbody.innerHTML = '<tr><td colspan="7" class="p-4">Nenhum usuário encontrado</td></tr>';
         return;
@@ -77,10 +95,17 @@ async function fetchAndRenderUsers() {
         btn.addEventListener('click', async (e) => {
             const id = e.currentTarget.getAttribute('data-id');
             if (!confirm('Confirmar exclusão?')) return;
-            await fetch(`/admin/api/usuarios/${id}`, {
-                method: 'DELETE',
-                headers: { 'X-CSRF-TOKEN': getCsrf() }
-            });
+            try {
+                const response = await fetch(`/admin/api/usuarios/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'X-CSRF-TOKEN': getCsrf(), Accept: 'application/json' }
+                });
+                const result = await response.json().catch(() => null);
+                if (!response.ok) throw new Error(result?.message || 'Não foi possível excluir o usuário. Verifique sua conexão e tente novamente.');
+            } catch (error) {
+                window.alert(error.message || 'Falha de conexão ao excluir o usuário.');
+                return;
+            }
             fetchAndRenderUsers();
         });
     });
@@ -98,6 +123,7 @@ async function handleUsuarioForm() {
     const tipo = document.getElementById('tipo');
     const siapeField = document.getElementById('siape');
     const matriculaField = document.getElementById('matricula');
+    const cursoField = document.getElementById('curso');
 
     // CPF: permitir digitar somente números (no frontend) — backend formata ao salvar
     if (cpf) {
@@ -109,29 +135,31 @@ async function handleUsuarioForm() {
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        if (!emailValidation(email.value)) return alert('Email inválido');
-
         const submitBtn = form.querySelector('button[type="submit"]');
         const origText = submitBtn ? submitBtn.textContent : null;
-        if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Salvando...'; }
+        form.querySelector('[data-form-error]')?.remove();
+
+        if (!emailValidation(email.value)) return showFormError('Informe um endereço de e-mail válido.', 'email');
 
         const tipoSelecionado = tipo ? tipo.value : '';
         if (tipoSelecionado === 'administrador') {
-            alert('O administrador já possui login base no banco de dados. Não é possível criar outro administrador no cadastro.');
-            return;
+            return showFormError('A conta administrativa base não pode ser criada por esta tela.', 'tipo');
         }
 
         const cpfDigits = cpf ? onlyDigits(cpf.value) : '';
-        if (cpf && cpfDigits.length > 0 && cpfDigits.length !== 11) return alert('CPF deve conter 11 dígitos');
+        if (cpf && cpfDigits.length > 0 && cpfDigits.length !== 11) return showFormError('O CPF deve conter 11 dígitos.', 'cpf');
 
         const siapeDigits = siapeField ? onlyDigits(siapeField.value) : '';
-        if (tipoSelecionado === 'orientador' && siapeDigits.length !== 8) return alert('SIAPE deve conter 8 dígitos');
+        if (tipoSelecionado === 'orientador' && siapeDigits.length !== 8) return showFormError('O SIAPE deve conter exatamente 8 dígitos.', 'siape');
 
         // Validação: matrícula é obrigatória para alunos
         if (tipoSelecionado === 'aluno') {
             const matVal = matriculaField ? (matriculaField.value || '').trim() : '';
-            if (! matVal) return alert('Matrícula é obrigatória para usuários do tipo Aluno');
+            if (! matVal) return showFormError('Informe a matrícula do aluno.', 'matricula');
+            if (!cursoField || !cursoField.value) return showFormError('Selecione o curso do aluno.', 'curso');
         }
+
+        if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Salvando...'; }
 
         const payload = {
             nome: nome.value,
@@ -140,6 +168,7 @@ async function handleUsuarioForm() {
             cpf: cpf ? cpfDigits : undefined,
             tipo: tipoSelecionado,
             matricula: matriculaField ? matriculaField.value || undefined : undefined,
+            curso: cursoField ? cursoField.value || undefined : undefined,
             siape: siapeField ? siapeDigits || undefined : undefined,
         };
 
@@ -153,6 +182,7 @@ async function handleUsuarioForm() {
                 credentials: 'same-origin',
                 headers: {
                     'Content-Type': 'application/json',
+                    Accept: 'application/json',
                     'X-CSRF-TOKEN': getCsrf()
                 },
                 body: JSON.stringify(payload)
@@ -169,20 +199,19 @@ async function handleUsuarioForm() {
                 // Laravel pode retornar errors array
                 if (err.errors) {
                     const first = Object.values(err.errors)[0];
-                    alert(Array.isArray(first) ? first[0] : first);
+                    showFormError(Array.isArray(first) ? first[0] : first);
                 } else if (err.message) {
-                    alert(err.message);
+                    showFormError(err.message);
                 } else {
-                    alert('Erro de validação ao salvar usuário');
+                    showFormError('Confira os dados informados e tente novamente.');
                 }
             } else if (err && err.message) {
-                alert(err.message);
+                showFormError(err.message);
             } else {
-                alert('Erro ao salvar (verifique o console e os logs)');
+                showFormError('Não foi possível salvar o usuário. Verifique sua conexão e tente novamente.');
             }
         } catch (ex) {
-            console.error('Erro na requisição:', ex);
-            alert('Erro de rede ao salvar usuário');
+            showFormError('Falha de conexão ao salvar o usuário. Verifique sua rede e tente novamente.');
         } finally {
             if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = origText; }
         }
@@ -190,15 +219,22 @@ async function handleUsuarioForm() {
 
     // If edit page, load user
     if (userId) {
-        const res = await fetch(`/admin/api/usuarios/${userId}`);
-        if (res.ok) {
-            const u = await res.json();
+        try {
+            const res = await fetch(`/admin/api/usuarios/${userId}`, {
+                headers: { Accept: 'application/json' }
+            });
+            const u = await res.json().catch(() => null);
+            if (!res.ok) throw new Error(u?.message || 'Não foi possível carregar os dados deste usuário.');
+            if (!u) throw new Error('O servidor retornou uma resposta inválida ao carregar este usuário.');
             nome.value = u.Nome || '';
             email.value = u.Email || '';
             cpf.value = onlyDigits(u.cpf || '');
             tipo.value = u.atribuicao || '';
             if (matriculaField) matriculaField.value = u.matricula || '';
+            if (cursoField) cursoField.value = u.curso || '';
             if (siapeField) siapeField.value = onlyDigits(u.siape || '');
+        } catch (error) {
+            showFormError(error.message || 'Falha de conexão ao carregar este usuário.');
         }
     }
 
@@ -206,17 +242,22 @@ async function handleUsuarioForm() {
     function updateFieldVisibility(selected) {
         const tipoLower = (selected || '').toLowerCase();
         const matGroup = document.getElementById('matricula-group');
+        const cursoGroup = document.getElementById('curso-group');
         const siapeGroup = document.getElementById('siape-group');
         if (matGroup) matGroup.classList.add('hidden');
+        if (cursoGroup) cursoGroup.classList.add('hidden');
         if (siapeGroup) siapeGroup.classList.add('hidden');
         // remover required por padrão
         if (matGroup) { const mf = matGroup.querySelector('input'); if (mf) mf.required = false; }
+        if (cursoField) cursoField.required = false;
         if (siapeGroup) { const sf = siapeGroup.querySelector('input'); if (sf) sf.required = false; }
         if (tipoLower === 'aluno') {
             if (matGroup) {
                 matGroup.classList.remove('hidden');
                 const mf = matGroup.querySelector('input'); if (mf) mf.required = true;
             }
+            if (cursoGroup) cursoGroup.classList.remove('hidden');
+            if (cursoField) cursoField.required = true;
         } else if (tipoLower === 'orientador') {
             if (siapeGroup) {
                 siapeGroup.classList.remove('hidden');

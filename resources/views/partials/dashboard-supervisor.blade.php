@@ -1,3 +1,38 @@
+@if(isset($estagios) && isset($frequenciasPendentes))
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <header>
+        <h1 class="text-2xl font-semibold text-gray-900">Painel do supervisor</h1>
+        <p class="mt-1 text-sm text-gray-600">Valide somente as presenças oficiais dos estágios atribuídos a você.</p>
+    </header>
+    <section class="grid gap-4 sm:grid-cols-2">
+        <div class="border-b border-gray-200 py-4"><p class="text-sm text-gray-600">Estágios atribuídos</p><p class="mt-1 text-2xl font-semibold">{{ $estagios->count() }}</p></div>
+        <div class="border-b border-gray-200 py-4"><p class="text-sm text-gray-600">Presenças aguardando validação</p><p class="mt-1 text-2xl font-semibold">{{ $frequenciasPendentes }}</p></div>
+    </section>
+    <section>
+        <h2 class="mb-3 text-lg font-semibold text-gray-900">Estágios sob minha supervisão</h2>
+        @if($estagios->isEmpty())
+            <p class="border-y border-gray-200 py-5 text-sm text-gray-600">Nenhum estágio foi atribuído a você.</p>
+        @else
+            <div class="overflow-x-auto border-y border-gray-200">
+                <table class="min-w-full divide-y divide-gray-200 text-left text-sm">
+                    <thead class="text-xs uppercase text-gray-600"><tr><th class="py-3 pr-4">Aluno</th><th class="py-3 pr-4">Local</th><th class="py-3 pr-4">Orientador</th><th class="py-3 pr-4">Pendentes</th><th class="py-3">Ação</th></tr></thead>
+                    <tbody class="divide-y divide-gray-100">
+                        @foreach($estagios as $estagio)
+                            <tr>
+                                <td class="py-3 pr-4 font-medium text-gray-900">{{ $estagio->aluno->nome }}</td>
+                                <td class="py-3 pr-4">{{ $estagio->local }}</td>
+                                <td class="py-3 pr-4">{{ $estagio->orientador->usuario->Nome }}</td>
+                                <td class="py-3 pr-4">{{ $estagio->presencas->where('status', 'pendente')->count() }}</td>
+                                <td class="py-3"><a href="{{ route('estagios.show', $estagio) }}" class="font-medium text-[#0056c9] hover:underline">Acompanhar</a></td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @endif
+    </section>
+</main>
+@else
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="mb-6">
         <div class="flex items-start gap-3">
@@ -61,7 +96,7 @@
                         <p class="text-sm text-gray-500">02/06/2026 • 09:00 – 17:00</p>
                         <p class="text-xs text-gray-400 mt-0.5">8h registradas</p>
                     </div>
-                    <div class="flex gap-2 flex-shrink-0">
+                    <div class="flex gap-2 shrink-0">
                         <button class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm font-medium">Validar</button>
                         <button class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm font-medium">Rejeitar</button>
                     </div>
@@ -75,7 +110,7 @@
                         <p class="text-sm text-gray-500">03/06/2026 • 14:00 – 18:00</p>
                         <p class="text-xs text-gray-400 mt-0.5">4h registradas</p>
                     </div>
-                    <div class="flex gap-2 flex-shrink-0">
+                    <div class="flex gap-2 shrink-0">
                         <button class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm font-medium">Validar</button>
                         <button class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm font-medium">Rejeitar</button>
                     </div>
@@ -124,3 +159,4 @@
         </div>
     </div>
 </div>
+@endif
