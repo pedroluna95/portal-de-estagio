@@ -13,10 +13,6 @@ COPY . .
 
 RUN composer install --no-dev --optimize-autoloader
 
-# Install Python dependencies for scripts under /var/www/python
-COPY python/requirements.txt /tmp/requirements.txt
-RUN python3 -m pip install --upgrade pip && python3 -m pip install -r /tmp/requirements.txt || true
-
 EXPOSE 8000
 
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
