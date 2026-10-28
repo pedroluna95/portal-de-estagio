@@ -5,7 +5,7 @@ RUN apt-get update && apt-get install -y \
     python3 python3-pip \
     && docker-php-ext-install pdo pdo_mysql mbstring zip bcmath
 
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 
 WORKDIR /var/www
 
