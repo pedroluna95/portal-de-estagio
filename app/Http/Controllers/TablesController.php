@@ -10,7 +10,6 @@ class TablesController
 {
     private const TABLES = [
         'usuarios' => ['user_ID', 'Nome', 'Email', 'atribuicao_id', 'cpf', 'created_at', 'updated_at'],
-        'vagas' => ['Vaga_ID', 'Nome_vaga', 'Desc_vaga', 'Area_de_atuacao', 'Requisitos', 'Empresa', 'Atuacao'],
     ];
 
     public function listTables()

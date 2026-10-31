@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Estagio;
 use App\Models\Presenca;
 use App\Services\EstagioService;
+use Closure;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -34,11 +35,18 @@ class PresencaController extends Controller
         $dados = $request->validate([
             'modo' => ['required', 'in:oficial,pessoal'],
             'data' => [
+                'bail',
                 'required',
                 'date_format:Y-m-d',
                 'before:today',
-                'after_or_equal:' . $estagio->data_inicio->toDateString(),
-                'before_or_equal:' . $estagio->data_fim->toDateString(),
+                function (string $attribute, mixed $value, Closure $fail) use ($estagio): void {
+                    if (
+                        $value < $estagio->data_inicio->toDateString() ||
+                        $value > $estagio->data_fim->toDateString()
+                    ) {
+                        $fail('A data deve estar dentro do período do estágio.');
+                    }
+                },
             ],
             'entrada' => ['required', 'date_format:H:i'],
             'saida' => ['required', 'date_format:H:i', 'after:entrada'],
@@ -49,8 +57,6 @@ class PresencaController extends Controller
             'modo.in' => 'Escolha um modo de registro válido.',
             'data.date_format' => 'Informe uma data válida.',
             'data.before' => 'Registre somente períodos encerrados. A data deve ser anterior a hoje.',
-            'data.before_or_equal' => 'A data deve estar dentro do período do estágio.',
-            'data.after_or_equal' => 'A data deve estar dentro do período do estágio e não pode ser futura.',
             'data.unique' => 'Já existe uma frequência registrada para esse dia.',
             'entrada.required' => 'Informe o horário de entrada.',
             'entrada.date_format' => 'O horário de entrada é inválido.',

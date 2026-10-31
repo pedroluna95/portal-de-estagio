@@ -27,7 +27,7 @@ class UsuarioServiceTest extends TestCase
 
     public function test_model_classes_exist_and_extend_usuario()
     {
-        $models = ['Aluno','Orientador','Supervisor','Contratante','Administrador'];
+        $models = ['Aluno','Orientador','Supervisor','Administrador'];
         foreach ($models as $m) {
             $class = "App\\Models\\$m";
             $this->assertTrue(class_exists($class), "Classe $class não existe");

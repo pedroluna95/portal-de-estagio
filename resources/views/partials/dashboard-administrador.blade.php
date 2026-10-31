@@ -5,7 +5,7 @@
     </div>
 
     {{-- status --}}
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+    <div class="grid grid-cols-1 gap-6 mb-8">
         <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
             <div class="inline-flex p-3 rounded-lg bg-blue-50 text-blue-600 mb-4"><span class="material-symbols-outlined">groups</span></div>
             <h3 class="text-sm text-gray-600 mb-1">Total de Usuários</h3>
@@ -26,7 +26,7 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 gap-6">
         {{-- Ações Rápidas --}}
         <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
             <h2 class="text-xl font-semibold mb-4">Ações Rápidas</h2>

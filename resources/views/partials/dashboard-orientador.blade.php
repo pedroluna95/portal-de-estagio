@@ -7,7 +7,7 @@
         <a href="{{ route('estagios.index') }}" class="rounded bg-[#0077fc] px-4 py-2 text-sm font-medium text-white hover:bg-[#0056c9]">Gerenciar estágios</a>
     </header>
 
-    <section class="mb-8 grid gap-4 sm:grid-cols-2">
+    <section class="mb-8 grid grid-cols-1 gap-4">
         <div class="border-b border-gray-200 py-4">
             <p class="text-sm text-gray-600">Estágios vinculados</p>
             <p class="mt-1 text-2xl font-semibold text-gray-900">{{ $estagios->count() }}</p>

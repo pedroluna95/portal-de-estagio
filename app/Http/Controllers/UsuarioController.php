@@ -17,7 +17,7 @@ use App\Rules\ValidarCpf;
 
 class UsuarioController
 {
-    private const TIPOS = ['aluno', 'orientador', 'supervisor', 'contratante'];
+    private const TIPOS = ['aluno', 'orientador', 'supervisor'];
 
     public function index(Request $request)
     {
@@ -112,11 +112,6 @@ class UsuarioController
                         ]);
                         break;
 
-                    case 'contratante':
-                        \App\Models\Contratante::create([
-                            'user_ID' => $usuario->user_ID,
-                        ]);
-                        break;
                 }
 
                 return $usuario;
@@ -268,7 +263,6 @@ class UsuarioController
 
                     Orientador::where('user_ID', $usuario->user_ID)->delete();
                     Supervisor::where('user_ID', $usuario->user_ID)->delete();
-                    \App\Models\Contratante::where('user_ID', $usuario->user_ID)->delete();
                 }
                 elseif ($tipoNovo === 'orientador') {
                     Orientador::updateOrCreate(
@@ -278,19 +272,11 @@ class UsuarioController
 
                     Aluno::where('user_id', $usuario->user_ID)->delete();
                     Supervisor::where('user_ID', $usuario->user_ID)->delete();
-                    \App\Models\Contratante::where('user_ID', $usuario->user_ID)->delete();
                 }
                 elseif ($tipoNovo === 'supervisor') {
                     Supervisor::updateOrCreate(['user_ID' => $usuario->user_ID]);
                     Aluno::where('user_id', $usuario->user_ID)->delete();
                     Orientador::where('user_ID', $usuario->user_ID)->delete();
-                    \App\Models\Contratante::where('user_ID', $usuario->user_ID)->delete();
-                }
-                elseif ($tipoNovo === 'contratante') {
-                    \App\Models\Contratante::updateOrCreate(['user_ID' => $usuario->user_ID]);
-                    Aluno::where('user_id', $usuario->user_ID)->delete();
-                    Orientador::where('user_ID', $usuario->user_ID)->delete();
-                    Supervisor::where('user_ID', $usuario->user_ID)->delete();
                 }
             });
 

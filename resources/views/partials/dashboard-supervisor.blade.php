@@ -4,7 +4,7 @@
         <h1 class="text-2xl font-semibold text-gray-900">Painel do supervisor</h1>
         <p class="mt-1 text-sm text-gray-600">Valide somente as presenças oficiais dos estágios atribuídos a você.</p>
     </header>
-    <section class="grid gap-4 sm:grid-cols-2">
+    <section class="grid grid-cols-1 gap-4">
         <div class="border-b border-gray-200 py-4"><p class="text-sm text-gray-600">Estágios atribuídos</p><p class="mt-1 text-2xl font-semibold">{{ $estagios->count() }}</p></div>
         <div class="border-b border-gray-200 py-4"><p class="text-sm text-gray-600">Presenças aguardando validação</p><p class="mt-1 text-2xl font-semibold">{{ $frequenciasPendentes }}</p></div>
     </section>
@@ -50,13 +50,13 @@
     <div class="flex items-start gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-3 mb-8">
         <span class="material-symbols-outlined text-green-600 text-[20px] mt-0.5">verified</span>
         <p class="text-sm text-green-800">
-            Você é o único responsável pela <strong>validação de horas</strong> dos estagiários internos
-            (Monitoria e Projetos de Extensão). Vagas externas possuem supervisores próprios das empresas contratantes.
+            Você é o responsável pela <strong>validação de horas</strong> dos estagiários internos
+            (Monitoria e Projetos de Extensão).
         </p>
     </div>
 
     {{-- Stats --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="grid grid-cols-1 gap-6 mb-8">
         <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
             <div class="inline-flex p-3 rounded-lg bg-blue-50 text-blue-600 mb-4"><span class="material-symbols-outlined">groups</span></div>
             <h3 class="text-sm text-gray-600 mb-1">Estagiários Ativos</h3>
@@ -79,7 +79,7 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 gap-6">
         {{-- Validação de presenças --}}
         <div class="lg:col-span-2 bg-white rounded-xl p-6 shadow-sm border border-gray-200">
             <div class="flex items-center justify-between mb-5">

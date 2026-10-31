@@ -1,102 +1,115 @@
 @import 'tailwindcss';
+@plugin '@tailwindcss/forms';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
 @source '../**/*.js';
+@source '../../public/js/**/*.js';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+    --color-primary: #0077fc;
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-/* =========================
-   VARIÁVEIS GLOBAIS
-========================= */
 :root {
-    --primary: #5a2dfd;
-    --background-light: #f8f6f6;
-    --background-dark: #221610;
+    --primary: #0077fc;
+    --primary-dark: #0056c9;
+    --background-light: #ffffff;
+    --background-dark: #111827;
 }
 
-/* =========================
-   BASE
-========================= */
-body {
-    font-family: 'Public Sans', sans-serif;
-    background-color: var(--background-light);
-    color: #0f172a;
-    min-height: 100vh;
-    margin: 0;
+@layer base {
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background-color: var(--background-light);
+        color: #111827;
+        min-height: 100vh;
+        margin: 0;
+    }
+
+    .dark body {
+        background-color: var(--background-dark);
+        color: #f1f5f9;
+    }
+
+    header {
+        background-color: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .dark header {
+        background-color: rgba(17, 24, 39, 0.85);
+        border-bottom: 1px solid #1e293b;
+    }
 }
 
-.dark body {
-    background-color: var(--background-dark);
-    color: #f1f5f9;
+@layer components {
+    .fig-gradient {
+        background: linear-gradient(to bottom right, #0077fc, #0056c9);
+    }
+
+    .btn-pill {
+        border-radius: 9999px;
+        font-weight: 700;
+        padding: 0.75rem 2rem;
+        transition: all 0.2s;
+    }
+
+    .btn-pill-primary {
+        background: linear-gradient(to right, #0077fc, #0056c9);
+        color: white;
+        box-shadow: 0 10px 25px -5px rgba(0, 119, 252, 0.35);
+    }
+
+    .btn-pill-primary:hover {
+        filter: brightness(1.1);
+        transform: translateY(-1px);
+    }
+
+    .btn-pill-secondary {
+        background-color: #f3f4f6;
+        color: #111827;
+    }
+
+    .dark .btn-pill-secondary {
+        background-color: #374151;
+        color: #f9fafb;
+    }
+
+    .btn-pill-secondary:hover {
+        background-color: #e5e7eb;
+    }
+
+    .dark .btn-pill-secondary:hover {
+        background-color: #4b5563;
+    }
+
+    .card-figma {
+        background-color: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 1rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.04);
+        transition: all 0.25s;
+    }
+
+    .dark .card-figma {
+        background-color: #1f2937;
+        border-color: #374151;
+    }
+
+    .card-figma:hover {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+
 }
 
-/* =========================
-   HEADER
-========================= */
-header {
-    background-color: rgba(248, 246, 246, 0.8);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid #e2e8f0;
-}
-
-.dark header {
-    background-color: rgba(34, 22, 16, 0.8);
-    border-bottom: 1px solid #1e293b;
-}
-
-/* =========================
-   BOTÕES
-========================= */
-.btn-primary {
-    background-color: var(--primary);
-    color: white;
-    font-weight: 700;
-    padding: 0.625rem 1.5rem;
-    border-radius: 0.75rem;
-    transition: all 0.2s;
-    box-shadow: 0 10px 15px -3px rgba(90, 45, 253, 0.2);
-}
-
-.btn-primary:hover {
-    background-color: #4a1edb;
-}
-
-/* =========================
-   CARDS
-========================= */
-.job-card {
-    background-color: white;
-    border: 1px solid #e2e8f0;
-    border-radius: 0.75rem;
-    padding: 1.5rem;
-    transition: all 0.3s;
-}
-
-.dark .job-card {
-    background-color: #0f172a;
-    border-color: #1e293b;
-}
-
-.job-card:hover {
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-    border-color: rgba(90, 45, 253, 0.3);
-}
-
-/* =========================
-   UTILITÁRIOS
-========================= */
 .text-primary {
     color: var(--primary);
 }
 
-.font-black {
-    font-weight: 900;
-}
-
-.font-extrabold {
-    font-weight: 800;
+.bg-primary {
+    background-color: var(--primary);
 }

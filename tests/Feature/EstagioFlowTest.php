@@ -50,6 +50,74 @@ class EstagioFlowTest extends TestCase
         parent::tearDown();
     }
 
+    public function test_job_board_is_removed_and_company_directory_remains_available(): void
+    {
+        $alunoId = $this->createUser('aluno');
+
+        $this->get('/vagas')->assertNotFound();
+        $this->get('/vagas/1')->assertNotFound();
+        $this->get('/inscricoes')->assertNotFound();
+        $this->get('/cadastro/contratante')->assertNotFound();
+
+        $this->withSession(['usuario_id' => $alunoId])
+            ->get('/empresas')
+            ->assertOk()
+            ->assertSee('Empresas Conveniadas')
+            ->assertDontSee('Vagas Disponíveis')
+            ->assertDontSee('Ver Vagas Disponíveis');
+
+        $this->withSession(['usuario_id' => $alunoId])
+            ->get('/tutorial')
+            ->assertOk()
+            ->assertSee('Trilha Completa do Estágio')
+            ->assertSee('7 etapas para você completar');
+    }
+
+    public function test_home_redirects_authenticated_users_to_their_dashboard(): void
+    {
+        $alunoId = $this->createUser('aluno');
+        $orientadorId = $this->createUser('orientador');
+        $supervisorId = $this->createUser('supervisor');
+
+        $this->get('/home')
+            ->assertOk()
+            ->assertSee('Criar Conta')
+            ->assertSee('Já tenho conta');
+
+        $this->withSession(['usuario_id' => $alunoId])
+            ->get('/')
+            ->assertRedirect(route('dashboard'));
+
+        $this->withSession(['usuario_id' => $alunoId])
+            ->get('/aluno')
+            ->assertRedirect(route('dashboard'));
+
+        $this->get('/home')->assertRedirect(route('dashboard'));
+        $this->get(route('dashboard'))->assertOk()->assertSee('Bem-vindo de volta');
+
+        $this->withSession(['usuario_id' => $orientadorId])
+            ->get('/home')
+            ->assertRedirect(route('dashboard'));
+        $this->get(route('dashboard'))->assertOk()->assertSee('Dashboard do orientador');
+
+        $this->withSession(['usuario_id' => $supervisorId])
+            ->get('/home')
+            ->assertRedirect(route('dashboard'));
+        $this->get(route('dashboard'))->assertOk()->assertSee('Painel do supervisor');
+    }
+
+    public function test_legacy_job_offerings_table_is_removed_by_migration(): void
+    {
+        Schema::create('vagas', function (Blueprint $table) {
+            $table->integer('Vaga_ID')->primary();
+        });
+
+        $migration = require base_path('database/migrations/2026_10_30_000001_drop_vagas_table.php');
+        $migration->up();
+
+        $this->assertFalse(Schema::hasTable('vagas'));
+    }
+
     public function test_orientador_initializes_stage_and_student_cannot_open_another_students_stage(): void
     {
         $orientadorId = $this->createUser('orientador');
@@ -336,6 +404,48 @@ class EstagioFlowTest extends TestCase
         $metricas = app(\App\Services\EstagioService::class)->metricas($stage->fresh(['jornada', 'presencas']));
         $this->assertSame(0, $metricas['aprovadas_minutos']);
         $this->assertSame(0, $metricas['pendentes_minutos']);
+    }
+
+    public function test_attendance_accepts_start_date_and_rejects_dates_before_internship_period(): void
+    {
+        $alunoId = $this->createUser('aluno');
+        $this->createUser('orientador');
+        $stage = Estagio::create([
+            'aluno_id' => $alunoId,
+            'orientador_id' => 1,
+            'local' => 'Laboratório de Sistemas',
+            'data_inicio' => '2026-09-28',
+            'data_fim' => '2026-10-05',
+            'status' => Estagio::STATUS_ATIVO,
+        ]);
+        JornadaEstagio::create([
+            'estagio_id' => $stage->id,
+            'horas_diarias' => 6,
+            'segunda' => true,
+            'terca' => true,
+            'quarta' => true,
+            'quinta' => true,
+            'sexta' => true,
+        ]);
+
+        $this->withSession(['usuario_id' => $alunoId])
+            ->post(route('estagios.presencas.store', $stage), [
+                'modo' => Presenca::MODO_PESSOAL,
+                'data' => '2026-09-28',
+                'entrada' => '08:00',
+                'saida' => '13:00',
+            ])
+            ->assertRedirect(route('estagios.show', $stage))
+            ->assertSessionHasNoErrors();
+
+        $this->post(route('estagios.presencas.store', $stage), [
+            'modo' => Presenca::MODO_PESSOAL,
+            'data' => '2026-09-27',
+            'entrada' => '08:00',
+            'saida' => '13:00',
+        ])->assertSessionHasErrors('data');
+
+        $this->assertSame(1, Presenca::where('estagio_id', $stage->id)->count());
     }
 
     public function test_orientador_can_assign_legacy_stage_and_cannot_reassign_after_official_attendance(): void

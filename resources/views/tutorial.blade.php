@@ -5,10 +5,10 @@
     {{-- Hero --}}
     <div class="fig-gradient rounded-2xl p-8 mb-8 text-white">
         <h1 class="text-3xl font-bold mb-2">Trilha Completa do Estágio</h1>
-        <p class="text-blue-100">9 etapas para você completar seu estágio com segurança e sem dúvidas</p>
+        <p class="text-blue-100">7 etapas para você completar seu estágio com segurança e sem dúvidas</p>
         <div class="flex flex-wrap gap-4 mt-6 text-sm">
             <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-white/15 rounded-full">
-                <span class="material-symbols-outlined text-[16px]">route</span> 9 Etapas
+                <span class="material-symbols-outlined text-[16px]">route</span> 7 Etapas
             </span>
             <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-white/15 rounded-full">
                 <span class="material-symbols-outlined text-[16px]">schedule</span> 240h de estágio
@@ -19,7 +19,7 @@
         </div>
     </div>
 
-    {{-- Timeline das 9 etapas --}}
+    {{-- Timeline das etapas --}}
     <div class="space-y-4">
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex gap-4">
             <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
@@ -66,36 +66,12 @@
         </div>
 
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex gap-4">
-            <div class="w-12 h-12 rounded-xl bg-pink-50 flex items-center justify-center flex-shrink-0">
-                <span class="material-symbols-outlined text-pink-600">description</span>
-            </div>
-            <div>
-                <h3 class="text-lg font-semibold text-gray-900 mb-1">5. Currículo e Candidatura</h3>
-                <p class="text-sm text-gray-600">Mantenha seu currículo atualizado no perfil e candidate-se às vagas disponíveis. Empresas e o próprio CEFET avaliam o perfil do candidato antes de contratar.</p>
-            </div>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex gap-4">
             <div class="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center flex-shrink-0">
                 <span class="material-symbols-outlined text-indigo-600">folder</span>
             </div>
             <div>
-                <h3 class="text-lg font-semibold text-gray-900 mb-1">6. Documentação Necessária</h3>
+                <h3 class="text-lg font-semibold text-gray-900 mb-1">5. Documentação Necessária</h3>
                 <p class="text-sm text-gray-600">Para formalizar o estágio são necessários: <strong>Termo de Compromisso</strong> (assinado por aluno, empresa e instituição), <strong>Plano de Atividades</strong> e seguro contra acidentes pessoais.</p>
-            </div>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex gap-4">
-            <div class="w-12 h-12 rounded-xl bg-cyan-50 flex items-center justify-center flex-shrink-0">
-                <span class="material-symbols-outlined text-cyan-600">search</span>
-            </div>
-            <div class="flex-1">
-                <h3 class="text-lg font-semibold text-gray-900 mb-1">7. Busca por Vagas</h3>
-                <p class="text-sm text-gray-600">Utilize o portal para buscar vagas internas (monitoria e projetos de extensão) ou em empresas conveniadas. Filtre por cidade, curso e modalidade.</p>
-                <a href="/vagas" class="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-[#0077fc] text-white rounded-lg text-sm font-medium hover:bg-[#0056c9] transition-colors">
-                    <span class="material-symbols-outlined text-[16px]">search</span>
-                    Buscar Vagas
-                </a>
             </div>
         </div>
 
@@ -104,7 +80,7 @@
                 <span class="material-symbols-outlined text-yellow-600">calendar_month</span>
             </div>
             <div class="flex-1">
-                <h3 class="text-lg font-semibold text-gray-900 mb-1">8. Registro e Controle de Horas</h3>
+                <h3 class="text-lg font-semibold text-gray-900 mb-1">6. Registro e Controle de Horas</h3>
                 <p class="text-sm text-gray-600">Registre suas presenças diariamente no controle de horas do portal, como um ponto digital. Seu supervisor validará as horas registradas.</p>
                 <a href="/controle-horas" class="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-[#0077fc] text-white rounded-lg text-sm font-medium hover:bg-[#0056c9] transition-colors">
                     <span class="material-symbols-outlined text-[16px]">calendar_month</span>
@@ -118,20 +94,27 @@
                 <span class="material-symbols-outlined text-green-600">flag</span>
             </div>
             <div>
-                <h3 class="text-lg font-semibold text-gray-900 mb-1">9. Conclusão do Estágio</h3>
+                <h3 class="text-lg font-semibold text-gray-900 mb-1">7. Conclusão do Estágio</h3>
                 <p class="text-sm text-gray-600">Ao completar as horas exigidas, o orientador faz a avaliação final e a ficha de conclusão é gerada automaticamente. As horas são então registradas no histórico acadêmico.</p>
             </div>
+
+            {{-- Botões que dão acesso à ficha de frequência e ao modelo do relatório --}}
+            <a href="{{ asset('documents/CEFET - Ficha Individual de Frequência.xlsx') }}" class="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-[#0077fc] text-white rounded-lg text-sm font-medium hover:bg-[#0056c9] transition-colors">
+                    <span class="material-symbols-outlined text-[16px]">app_registration</span>
+                    Ficha de Frequência
+                </a>
+            <a href="{{ asset('documents/CEFET -Relatorio de estagio modelo 5.docx') }}" class="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-[#0077fc] text-white rounded-lg text-sm font-medium hover:bg-[#0056c9] transition-colors">
+                    <span class="material-symbols-outlined text-[16px]">description</span>
+                    Modelo de Relatório
+                </a>
         </div>
     </div>
 
     {{-- CTA final --}}
     <div class="fig-gradient rounded-2xl p-8 mt-8 text-white text-center">
         <h2 class="text-2xl font-bold mb-2">Pronto para começar?</h2>
-        <p class="text-blue-100 mb-6">Busque vagas e empresas conveniadas agora mesmo.</p>
-        <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="/vagas" class="btn-pill btn-pill-secondary">Buscar Vagas</a>
-            <a href="/empresas" class="btn-pill btn-pill-primary">Ver Empresas Conveniadas</a>
-        </div>
+        <p class="text-blue-100 mb-6">Consulte as empresas conveniadas ao CEFET e conheça as etapas para formalizar seu estágio.</p>
+        <a href="/empresas" class="btn-pill btn-pill-primary">Ver Empresas Conveniadas</a>
     </div>
 </div>
 @endsection

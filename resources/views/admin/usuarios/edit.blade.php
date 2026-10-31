@@ -16,7 +16,6 @@
                     <option value="aluno">Aluno</option>
                     <option value="supervisor">Supervisor</option>
                     <option value="orientador">Orientador</option>
-                    <option value="contratante">Contratante</option>
                 </select>
                 <div id="matricula-group" class="hidden">
                     <input name="matricula" id="matricula" placeholder="Matrícula" class="border p-2" maxlength="30" />

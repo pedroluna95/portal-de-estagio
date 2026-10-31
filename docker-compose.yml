@@ -1,3 +1,4 @@
+
 services:
   app:
     build: .
@@ -5,6 +6,8 @@ services:
       - "8000:8000"
     volumes:
       - .:/var/www
+      - vendor_data:/var/www/vendor
+      - node_modules_data:/var/www/node_modules
     environment:
       DB_HOST: db
       DB_PORT: 3307
@@ -28,3 +31,5 @@ services:
 
 volumes:
   dbdata:
+  vendor_data:
+  node_modules_data:

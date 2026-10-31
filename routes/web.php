@@ -16,8 +16,20 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rule;
 
-Route::redirect('/', '/home');
-Route::view('/home', 'home');
+Route::get('/', function (Request $request) {
+    if ($request->session()->has('usuario_id')) {
+        return redirect()->route('dashboard');
+    }
+
+    return redirect('/home');
+});
+Route::get('/home', function (Request $request) {
+    if ($request->session()->has('usuario_id')) {
+        return redirect()->route('dashboard');
+    }
+
+    return view('home');
+});
 Route::view('/login', 'login')->name('login');
 
 Route::post('/login', function (Request $request) {
@@ -64,7 +76,7 @@ Route::post('/login', function (Request $request) {
     return redirect('/dashboard');
 });
 
-$tiposCadastro = ['aluno', 'supervisor', 'orientador', 'contratante'];
+$tiposCadastro = ['aluno', 'supervisor', 'orientador'];
 Route::get('/cadastro/{tipo?}', function (?string $tipo = null) use ($tiposCadastro) {
     if ($tipo !== null && ! in_array(strtolower($tipo), $tiposCadastro, true)) {
         abort(404);
@@ -134,7 +146,7 @@ Route::post('/cadastro', function (Request $request) use ($tiposCadastro) {
 
 Route::middleware('web')->group(function () {
     Route::middleware(\App\Http\Middleware\SessionAuthMiddleware::class)->group(function () {
-        Route::view('/aluno', 'dashboard');
+        Route::redirect('/aluno', '/dashboard');
         Route::view('/tutorial', 'tutorial');
         Route::get('/perfil', function (Request $request) {
             $usuario = Usuario::findOrFail($request->session()->get('usuario_id'));
@@ -142,9 +154,6 @@ Route::middleware('web')->group(function () {
             return view('perfil', ['cursoAluno' => $usuario->curso]);
         });
         Route::view('/empresas', 'empresas');
-        Route::view('/vagas', 'vagas');
-        Route::view('/inscricoes', 'vagas');
-        Route::view('/vagas/{id}', 'vaga-detalhe');
         Route::get('/dashboard', [DashboardController::class, 'show'])->name('dashboard');
         Route::get('/controle-horas', [EstagioController::class, 'index'])->name('controle-horas');
         Route::get('/estagios', [EstagioController::class, 'index'])->name('estagios.index');

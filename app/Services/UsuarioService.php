@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Aluno;
-use App\Models\Contratante;
 use App\Models\Orientador;
 use App\Models\Supervisor;
 use App\Models\Usuario;
@@ -59,13 +58,6 @@ class UsuarioService
                     ]);
                     break;
 
-                case 'contratante':
-                    Contratante::create([
-                        'user_ID' => $usuario->user_ID,
-                        'cargo' => $data['cargo'] ?? null,
-                        'empresa' => $data['empresa'] ?? null,
-                    ]);
-                    break;
             }
 
             return $usuario;

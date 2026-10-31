@@ -4,11 +4,11 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="mb-6">
         <h1 class="text-3xl font-bold text-gray-900 mb-1">Empresas Conveniadas</h1>
-        <p class="text-gray-500">Parceiros do CEFET que oferecem vagas de estágio</p>
+        <p class="text-gray-500">Empresas parceiras com convênio com o CEFET</p>
     </div>
 
     {{-- Stats --}}
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
         <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
             <div class="inline-flex p-3 rounded-lg bg-blue-50 text-blue-600 mb-4"><span class="material-symbols-outlined">business</span></div>
             <h3 class="text-sm text-gray-600 mb-1">Empresas Ativas</h3>
@@ -18,11 +18,6 @@
             <div class="inline-flex p-3 rounded-lg bg-green-50 text-green-600 mb-4"><span class="material-symbols-outlined">badge</span></div>
             <h3 class="text-sm text-gray-600 mb-1">Convênios Ativos</h3>
             <p class="text-2xl font-bold text-gray-900">35</p>
-        </div>
-        <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-            <div class="inline-flex p-3 rounded-lg bg-orange-50 text-orange-600 mb-4"><span class="material-symbols-outlined">work</span></div>
-            <h3 class="text-sm text-gray-600 mb-1">Vagas Disponíveis</h3>
-            <p class="text-2xl font-bold text-gray-900">27</p>
         </div>
     </div>
 
@@ -85,37 +80,37 @@
 const EMPRESAS = [
     {
         nome: "Tech Solutions Ltda", cidade: "Rio de Janeiro", setor: "Tecnologia",
-        cnpj: "12.345.678/0001-90", vagas: 3, convênio: "31/12/2027",
+        cnpj: "12.345.678/0001-90", convênio: "31/12/2027",
         descricao: "Empresa especializada em desenvolvimento de software e soluções tecnológicas para o setor corporativo.",
         cor: "blue"
     },
     {
         nome: "Inovação Digital S.A.", cidade: "São Paulo", setor: "Tecnologia",
-        cnpj: "98.765.432/0001-10", vagas: 5, convênio: "30/06/2027",
+        cnpj: "98.765.432/0001-10", convênio: "30/06/2027",
         descricao: "Consultoria em transformação digital, inteligência artificial e análise de dados.",
         cor: "green"
     },
     {
         nome: "Consultoria Tech", cidade: "Belo Horizonte", setor: "Consultoria",
-        cnpj: "11.222.333/0001-44", vagas: 2, convênio: "31/03/2027",
+        cnpj: "11.222.333/0001-44", convênio: "31/03/2027",
         descricao: "Consultoria em gestão de projetos de tecnologia da informação e engenharia de software.",
         cor: "purple"
     },
     {
         nome: "Engenharia Civil RJ", cidade: "Rio de Janeiro", setor: "Engenharia",
-        cnpj: "44.555.666/0001-77", vagas: 4, convênio: "31/12/2026",
+        cnpj: "44.555.666/0001-77", convênio: "31/12/2026",
         descricao: "Construção civil e infraestrutura urbana com foco em obras de grande porte.",
         cor: "orange"
     },
     {
         nome: "Mecânica Industrial SA", cidade: "São Paulo", setor: "Engenharia",
-        cnpj: "77.888.999/0001-22", vagas: 6, convênio: "30/09/2027",
+        cnpj: "77.888.999/0001-22", convênio: "30/09/2027",
         descricao: "Fabricação de equipamentos industriais e manutenção de sistemas mecânicos.",
         cor: "red"
     },
     {
         nome: "Eletro Power Ltda", cidade: "Belo Horizonte", setor: "Engenharia",
-        cnpj: "33.444.555/0001-88", vagas: 3, convênio: "31/05/2027",
+        cnpj: "33.444.555/0001-88", convênio: "31/05/2027",
         descricao: "Geração, transmissão e distribuição de energia elétrica e automação industrial.",
         cor: "yellow"
     }
@@ -151,14 +146,9 @@ function renderCard(e) {
                 <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 text-gray-600 rounded-full text-xs"><span class="material-symbols-outlined text-[14px]">category</span>${e.setor}</span>
             </div>
             <div class="space-y-2 border-t border-gray-100 pt-3">
-                <div class="flex justify-between text-sm"><span class="text-gray-500">Vagas abertas</span><span class="font-medium text-[#0077fc]">${e.vagas}</span></div>
                 <div class="flex justify-between text-sm"><span class="text-gray-500">CNPJ</span><span class="font-medium text-gray-900">${e.cnpj}</span></div>
                 <div class="flex justify-between text-sm"><span class="text-gray-500">Convênio até</span><span class="font-medium text-gray-900">${e.convênio}</span></div>
             </div>
-            <button onclick="window.location.href='/vagas'"
-                class="mt-4 w-full py-2.5 bg-[#0077fc] text-white rounded-lg hover:bg-[#0056c9] transition-colors text-sm font-medium">
-                Ver Vagas Disponíveis
-            </button>
         </div>
     </div>`;
 }

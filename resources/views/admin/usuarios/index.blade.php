@@ -15,7 +15,6 @@
             <option value="aluno">Aluno</option>
             <option value="orientador">Orientador</option>
             <option value="supervisor">Supervisor</option>
-            <option value="contratante">Contratante</option>
             <option value="administrador">Administrador</option>
         </select>
     </div>

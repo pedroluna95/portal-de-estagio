@@ -35,14 +35,6 @@
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="card-figma p-6">
-            <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mb-4">
-                <span class="material-symbols-outlined text-[#0077fc]">search</span>
-            </div>
-            <h3 class="text-lg font-semibold text-gray-900 mb-2">Vagas Internas</h3>
-            <p class="text-gray-600 text-sm">Monitoria, projetos de extensão e estágios internos com filtros por cidade e curso.</p>
-        </div>
-
-        <div class="card-figma p-6">
             <div class="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center mb-4">
                 <span class="material-symbols-outlined text-green-600">schedule</span>
             </div>
@@ -55,7 +47,7 @@
                 <span class="material-symbols-outlined text-purple-600">menu_book</span>
             </div>
             <h3 class="text-lg font-semibold text-gray-900 mb-2">Tutorial Completo</h3>
-            <p class="text-gray-600 text-sm">Trilha com 9 etapas ensinando todo o processo, do conceito até a conclusão do estágio.</p>
+            <p class="text-gray-600 text-sm">Trilha com 7 etapas ensinando todo o processo, do conceito até a conclusão do estágio.</p>
         </div>
 
         <div class="card-figma p-6">
@@ -71,7 +63,7 @@
                 <span class="material-symbols-outlined text-pink-600">verified_user</span>
             </div>
             <h3 class="text-lg font-semibold text-gray-900 mb-2">Validação Segura</h3>
-            <p class="text-gray-600 text-sm">Cada perfil vê e valida apenas o que lhe compete: supervisor, orientador e contratante.</p>
+            <p class="text-gray-600 text-sm">Alunos, orientadores e supervisores acompanham e validam as etapas que lhes competem.</p>
         </div>
 
         <div class="card-figma p-6">
