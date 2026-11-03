@@ -4,7 +4,7 @@
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-2 text-gray-500">
                 <span class="material-symbols-outlined text-xl">copyright</span>
-                <p class="text-sm font-medium">2026 Portal Estágio CEFET - Todos os direitos reservados</p>
+                <p class="text-sm font-medium">2026 NEXO - Todos os direitos reservados</p>
             </div>
             <div class="flex items-center gap-6">
                 <a href="#" class="text-sm text-gray-500 hover:text-[#0077fc] transition-colors">Privacidade</a>

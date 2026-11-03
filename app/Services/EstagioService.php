@@ -38,7 +38,7 @@ class EstagioService
     public function supervisorAtual(Request $request): Supervisor
     {
         $usuario = $this->usuarioAtual($request);
-        abort_unless($usuario->tipo === 'supervisor', 403, 'Somente supervisores podem validar frequências.');
+        abort_unless($usuario->tipo === 'supervisor', 403, 'Somente supervisores podem acessar esta operação.');
 
         return Supervisor::where('user_ID', $usuario->user_ID)->firstOrFail();
     }
@@ -68,11 +68,28 @@ class EstagioService
 
     public function metricas(Estagio $estagio): array
     {
-        $estagio->loadMissing(['jornada', 'presencas']);
-        $presencasOficiais = $estagio->presencas->where('modo', Presenca::MODO_OFICIAL);
+        $estagio->loadMissing('jornada');
+        $presencas = $estagio->presencas()->get();
+        $presencasOficiais = $presencas->where('modo', Presenca::MODO_OFICIAL);
         $aprovadas = $presencasOficiais
             ->where('status', Presenca::STATUS_APROVADA)
             ->sum(fn (Presenca $presenca) => $presenca->minutos);
+        $pessoaisContabilizadas = 0;
+        $horasProgresso = $aprovadas;
+
+        foreach ($presencas->groupBy(fn (Presenca $presenca) => $presenca->data->toDateString()) as $presencasDoDia) {
+            $oficial = $presencasDoDia->firstWhere('modo', Presenca::MODO_OFICIAL);
+            if ($oficial?->status === Presenca::STATUS_APROVADA || $oficial?->status === Presenca::STATUS_RECUSADA) {
+                continue;
+            }
+
+            $pessoal = $presencasDoDia->firstWhere('modo', Presenca::MODO_PESSOAL);
+            if ($pessoal && (! $oficial || $oficial->status === Presenca::STATUS_PENDENTE)) {
+                $pessoaisContabilizadas += $pessoal->minutos;
+                $horasProgresso += $pessoal->minutos;
+            }
+        }
+
         $pendentes = $presencasOficiais
             ->where('status', Presenca::STATUS_PENDENTE)
             ->sum(fn (Presenca $presenca) => $presenca->minutos);
@@ -104,14 +121,22 @@ class EstagioService
             ->sum(fn (Presenca $presenca) => $presenca->minutos);
         $diferencaSemana = $realizadasSemana - $previstasSemana;
         $metaMinutos = self::CARGA_HORARIA_MINIMA * 60;
+        $percentualOficial = min(100, $aprovadas / $metaMinutos * 100);
+        $percentualPessoal = min(100 - $percentualOficial, $pessoaisContabilizadas / $metaMinutos * 100);
 
         return [
             'aprovadas_minutos' => $aprovadas,
+            'pessoais_contabilizadas_minutos' => $pessoaisContabilizadas,
+            'horas_progresso_minutos' => $horasProgresso,
             'pendentes_minutos' => $pendentes,
             'aprovadas_formatadas' => $this->formatarMinutos($aprovadas),
+            'pessoais_contabilizadas_formatadas' => $this->formatarMinutos($pessoaisContabilizadas),
+            'horas_progresso_formatadas' => $this->formatarMinutos($horasProgresso),
+            'progresso_oficial_percentual' => round($percentualOficial, 2),
+            'progresso_pessoal_percentual' => round($percentualPessoal, 2),
             'pendentes_formatadas' => $this->formatarMinutos($pendentes),
-            'restantes_formatadas' => $this->formatarMinutos(max(0, $metaMinutos - $aprovadas)),
-            'percentual' => min(100, (int) round($aprovadas / $metaMinutos * 100)),
+            'restantes_formatadas' => $this->formatarMinutos(max(0, $metaMinutos - $horasProgresso)),
+            'percentual' => min(100, (int) round($horasProgresso / $metaMinutos * 100)),
             'meta_horas' => self::CARGA_HORARIA_MINIMA,
             'semana_inicio' => $inicioSemana->format('d/m/Y'),
             'semana_fim' => $fimSemana->format('d/m/Y'),

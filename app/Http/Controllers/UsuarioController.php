@@ -38,7 +38,21 @@ class UsuarioController
                 $query->where(function ($qb) use ($q) {
                     $qb->where('Nome', 'like', "%{$q}%")
                         ->orWhere('Email', 'like', "%{$q}%")
-                        ->orWhere('cpf', 'like', "%{$q}%");
+                        ->orWhere('cpf', 'like', "%{$q}%")
+                        ->orWhereIn('user_ID', DB::table('alunos')
+                            ->select('user_id')
+                            ->where('matricula', 'like', "%{$q}%"))
+                        ->orWhereIn('user_ID', DB::table('orientadores')
+                            ->select('user_ID')
+                            ->where('siape', 'like', "%{$q}%"));
+
+                    $cpfDigits = preg_replace('/\D/', '', $q);
+                    if ($cpfDigits !== '') {
+                        $qb->orWhereRaw(
+                            "REPLACE(REPLACE(REPLACE(cpf, '.', ''), '-', ''), ' ', '') LIKE ?",
+                            ["%{$cpfDigits}%"]
+                        );
+                    }
                 });
             }
 
@@ -218,6 +232,16 @@ class UsuarioController
             );
         }
 
+        if (
+            $tipoNovo !== strtolower((string) $tipoAtual) &&
+            $this->hasProtectedStageReferences($usuario->user_ID, strtolower((string) $tipoAtual))
+        ) {
+            return $this->error(
+                'Não é possível alterar o perfil deste usuário porque ele está vinculado a estágios. Preserve o perfil para manter o histórico.',
+                409
+            );
+        }
+
         try {
             DB::transaction(function () use ($usuario, $data, $tipoNovo, $tipoAtual) {
                 if (array_key_exists('nome', $data)) {
@@ -265,9 +289,10 @@ class UsuarioController
                     Supervisor::where('user_ID', $usuario->user_ID)->delete();
                 }
                 elseif ($tipoNovo === 'orientador') {
+                    $orientadorExistente = Orientador::where('user_ID', $usuario->user_ID)->first();
                     Orientador::updateOrCreate(
                         ['user_ID' => $usuario->user_ID],
-                        ['siape' => $data['siape'] ?? null]
+                        ['siape' => $data['siape'] ?? $orientadorExistente?->getRawOriginal('siape')]
                     );
 
                     Aluno::where('user_id', $usuario->user_ID)->delete();
@@ -283,6 +308,13 @@ class UsuarioController
             return response()->json($usuario->fresh());
 
         } catch (\Throwable $e) {
+            if ($e instanceof QueryException && (int) ($e->errorInfo[1] ?? 0) === 1451) {
+                return $this->error(
+                    'Não é possível alterar o perfil deste usuário porque ele está vinculado a estágios. Preserve o perfil para manter o histórico.',
+                    409
+                );
+            }
+
             return $this->error(
                 'Não foi possível atualizar o usuário.',
                 500,
@@ -294,57 +326,76 @@ class UsuarioController
     public function destroy(Request $request, $id)
     {
         try {
-        $usuario = Usuario::find($id);
+            $usuario = Usuario::find($id);
 
-        if (!$usuario) {
-            return $this->error(
-                'Usuário não encontrado.',
-                404
-            );
-        }
+            if (! $usuario) {
+                return $this->error('Usuário não encontrado.', 404);
+            }
 
-        if (
-            (int) $request->session()->get('usuario_id')
-            === (int) $usuario->user_ID
-        ) {
-            return $this->error(
-                'Não é permitido excluir a própria conta.',
-                422
-            );
-        }
+            if ((int) $request->session()->get('usuario_id') === (int) $usuario->user_ID) {
+                return $this->error('Não é permitido excluir a própria conta.', 422);
+            }
 
-        /*
-         * Verifica a atribuição pelo ID.
-         */
-        $tipo = DB::table('atribuicoes')
-            ->where('Atribuicao_ID', $usuario->atribuicao_id)
-            ->value('Nome_atribuicao');
+            $tipo = strtolower((string) DB::table('atribuicoes')
+                ->where('Atribuicao_ID', $usuario->atribuicao_id)
+                ->value('Nome_atribuicao'));
 
-        if ($tipo === 'administrador') {
+            if ($tipo === 'administrador') {
+                $totalAdmins = Usuario::whereIn(
+                    'atribuicao_id',
+                    DB::table('atribuicoes')
+                        ->whereRaw('LOWER(Nome_atribuicao) = ?', ['administrador'])
+                        ->pluck('Atribuicao_ID')
+                )->count();
 
-            $totalAdmins = Usuario::whereIn(
-                'atribuicao_id',
-                DB::table('atribuicoes')
-                    ->where('Nome_atribuicao', 'administrador')
-                    ->pluck('Atribuicao_ID')
-            )->count();
+                if ($totalAdmins <= 1) {
+                    return $this->error('Não é permitido excluir o último administrador.', 422);
+                }
+            }
 
-            if ($totalAdmins <= 1) {
+            if ($this->hasProtectedStageReferences($usuario->user_ID, $tipo)) {
                 return $this->error(
-                    'Não é permitido excluir o último administrador.',
-                    422
+                    'Não é possível excluir este usuário porque ele está vinculado a estágios. Preserve a conta para manter o histórico.',
+                    409
                 );
             }
-        }
 
-        $usuario->delete();
+            DB::transaction(function () use ($usuario) {
+                Aluno::where('user_id', $usuario->user_ID)->delete();
+                Orientador::where('user_ID', $usuario->user_ID)->delete();
+                Supervisor::where('user_ID', $usuario->user_ID)->delete();
+                $usuario->delete();
+            });
 
-        return response()->json([
-            'message' => 'Usuário excluído.'
-        ]);
+            return response()->json(['message' => 'Usuário excluído.']);
         } catch (\Throwable $e) {
+            if ($e instanceof QueryException && (int) ($e->errorInfo[1] ?? 0) === 1451) {
+                return $this->error(
+                    'Não é possível excluir este usuário porque ele está vinculado a registros de estágio. Preserve a conta para manter o histórico.',
+                    409
+                );
+            }
+
             return $this->error('Não foi possível excluir o usuário.', 500, $e);
         }
+    }
+
+    private function hasProtectedStageReferences(int $userId, string $tipo): bool
+    {
+        if ($tipo === 'aluno') {
+            return DB::table('estagios')->where('aluno_id', $userId)->exists();
+        }
+
+        if ($tipo === 'orientador') {
+            $orientadorId = DB::table('orientadores')
+                ->where('user_ID', $userId)
+                ->value('orientador_ID');
+
+            return $orientadorId !== null &&
+                DB::table('estagios')->where('orientador_id', $orientadorId)->exists();
+        }
+
+        return false;
     }
 
     private function validated(Request $request): array

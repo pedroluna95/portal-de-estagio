@@ -15,8 +15,8 @@ class JornadaEstagioController extends Controller
 
     public function store(Request $request, int $estagioId)
     {
-        $aluno = $this->estagioService->alunoAtual($request);
-        $estagio = $aluno->estagios()->findOrFail($estagioId);
+        $supervisor = $this->estagioService->supervisorAtual($request);
+        $estagio = $supervisor->estagios()->findOrFail($estagioId);
 
         if ($this->estagioService->statusApresentacao($estagio) !== Estagio::STATUS_ATIVO) {
             throw ValidationException::withMessages([

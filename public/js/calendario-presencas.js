@@ -75,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
             recusada: 'border border-red-300 bg-red-200 text-red-900 hover:bg-red-300',
             pendente: 'border border-amber-300 bg-amber-200 text-amber-950 hover:bg-amber-300',
             pessoal: 'border border-blue-300 bg-blue-200 text-blue-950 hover:bg-blue-300',
+            futuro: 'border border-gray-200 bg-gray-100 text-gray-500',
             neutro: 'bg-gray-100 text-gray-500',
             fora: 'bg-white text-gray-300',
         };
@@ -150,8 +151,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 status = 'falta';
                 rotulo = 'Falta, sem presença registrada';
             } else if (previsto) {
-                status = 'pendente';
-                rotulo = 'Pendente preencher';
+                status = 'futuro';
+                rotulo = 'Dia previsto, ainda não realizado';
             }
 
             const podeSelecionar = estaNoPeriodo && previsto && !registro && chaveData < dados.hoje;

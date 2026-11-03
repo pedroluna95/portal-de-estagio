@@ -38,7 +38,15 @@ function getUserIdentifier(u) {
 async function fetchAndRenderUsers() {
     const tbody = document.getElementById('usuarios-tbody');
     if (!tbody) return;
-    tbody.innerHTML = '<tr><td colspan="7" class="p-4">Carregando...</td></tr>';
+    const resultCount = document.getElementById('usuarios-resultado');
+    tbody.replaceChildren();
+    const loadingRow = document.createElement('tr');
+    const loadingCell = document.createElement('td');
+    loadingCell.colSpan = 7;
+    loadingCell.className = 'px-5 py-10 text-center text-sm text-gray-500';
+    loadingCell.textContent = 'Carregando usuários...';
+    loadingRow.appendChild(loadingCell);
+    tbody.appendChild(loadingRow);
 
     const filtroTipo = document.getElementById('filtro-tipo');
     const busca = document.getElementById('busca-usuarios');
@@ -59,56 +67,95 @@ async function fetchAndRenderUsers() {
         if (!Array.isArray(result)) throw new Error('O servidor retornou uma resposta inválida ao carregar os usuários.');
         list = result;
     } catch (error) {
-        tbody.innerHTML = '';
+        tbody.replaceChildren();
         const row = document.createElement('tr');
         const cell = document.createElement('td');
         cell.colSpan = 7;
-        cell.className = 'p-4 text-red-700';
+        cell.className = 'px-5 py-8 text-center text-sm text-red-700';
         cell.textContent = error.message || 'Falha de conexão ao carregar os usuários.';
         row.appendChild(cell);
         tbody.appendChild(row);
+        if (resultCount) resultCount.textContent = '';
         return;
     }
-    if (!Array.isArray(list) || list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="p-4">Nenhum usuário encontrado</td></tr>';
+    if (list.length === 0) {
+        const row = document.createElement('tr');
+        const cell = document.createElement('td');
+        cell.colSpan = 7;
+        cell.className = 'px-5 py-10 text-center text-sm text-gray-500';
+        cell.textContent = buscaValue || tipoValue ? 'Nenhum usuário corresponde aos filtros.' : 'Nenhum usuário cadastrado.';
+        row.appendChild(cell);
+        tbody.replaceChildren(row);
+        if (resultCount) resultCount.textContent = '0 usuários';
         return;
     }
-    tbody.innerHTML = '';
+    const rows = document.createDocumentFragment();
     list.forEach(u => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td class="px-6 py-4">${u.user_ID}</td>
-            <td class="px-6 py-4">${u.Nome || ''}</td>
-            <td class="px-6 py-4">${u.Email || ''}</td>
-            <td class="px-6 py-4">${u.cpf || ''}</td>
-            <td class="px-6 py-4">${getUserIdentifier(u)}</td>
-            <td class="px-6 py-4">${u.atribuicao || ''}</td>
-            <td class="px-6 py-4 text-right">
-                <a href="/admin/usuarios/${u.user_ID}/edit" class="text-primary mr-3">Editar</a>
-                <button data-id="${u.user_ID}" class="text-red-600 hover:underline btn-delete">Excluir</button>
-            </td>
-        `;
-        tbody.appendChild(tr);
-    });
+        tr.className = 'transition-colors hover:bg-gray-50';
+        const addCell = (value, className = '') => {
+            const cell = document.createElement('td');
+            cell.className = `whitespace-nowrap px-4 py-4 text-gray-700 sm:px-5 ${className}`.trim();
+            cell.textContent = value == null || value === '' ? '—' : String(value);
+            tr.appendChild(cell);
+            return cell;
+        };
 
-    document.querySelectorAll('.btn-delete').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
-            const id = e.currentTarget.getAttribute('data-id');
-            if (!confirm('Confirmar exclusão?')) return;
-            try {
-                const response = await fetch(`/admin/api/usuarios/${id}`, {
-                    method: 'DELETE',
-                    headers: { 'X-CSRF-TOKEN': getCsrf(), Accept: 'application/json' }
-                });
-                const result = await response.json().catch(() => null);
-                if (!response.ok) throw new Error(result?.message || 'Não foi possível excluir o usuário. Verifique sua conexão e tente novamente.');
-            } catch (error) {
-                window.alert(error.message || 'Falha de conexão ao excluir o usuário.');
-                return;
-            }
-            fetchAndRenderUsers();
-        });
+        addCell(u.user_ID, 'font-medium text-gray-500');
+        addCell(u.Nome, 'font-medium text-gray-900');
+        addCell(u.Email);
+        addCell(u.cpf);
+        addCell(getUserIdentifier(u));
+
+        const typeCell = addCell('');
+        const typeBadge = document.createElement('span');
+        typeBadge.className = 'inline-flex rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium capitalize text-blue-800';
+        typeBadge.textContent = u.atribuicao || 'Sem perfil';
+        typeCell.appendChild(typeBadge);
+
+        const actions = addCell('', 'text-right');
+        if ((u.atribuicao || '').toLowerCase() === 'administrador') {
+            const protectedLabel = document.createElement('span');
+            protectedLabel.className = 'text-xs text-gray-500';
+            protectedLabel.textContent = 'Conta protegida';
+            actions.appendChild(protectedLabel);
+        } else {
+            const editLink = document.createElement('a');
+            editLink.href = `/admin/usuarios/${encodeURIComponent(u.user_ID)}/edit`;
+            editLink.className = 'mr-4 inline-flex items-center gap-1 font-medium text-[#0056c9] hover:underline';
+            editLink.textContent = 'Editar';
+            actions.appendChild(editLink);
+
+            const deleteButton = document.createElement('button');
+            deleteButton.type = 'button';
+            deleteButton.dataset.id = u.user_ID;
+            deleteButton.className = 'inline-flex items-center gap-1 font-medium text-red-700 hover:text-red-900 hover:underline';
+            deleteButton.textContent = 'Excluir';
+            deleteButton.addEventListener('click', async () => {
+                if (!window.confirm(`Excluir o usuário ${u.Nome || ''}?`)) return;
+                deleteButton.disabled = true;
+                deleteButton.textContent = 'Excluindo...';
+                try {
+                    const response = await fetch(`/admin/api/usuarios/${encodeURIComponent(u.user_ID)}`, {
+                        method: 'DELETE',
+                        credentials: 'same-origin',
+                        headers: { 'X-CSRF-TOKEN': getCsrf(), Accept: 'application/json' }
+                    });
+                    const result = await response.json().catch(() => null);
+                    if (!response.ok) throw new Error(result?.message || 'Não foi possível excluir o usuário.');
+                    await fetchAndRenderUsers();
+                } catch (error) {
+                    window.alert(error.message || 'Falha de conexão ao excluir o usuário.');
+                    deleteButton.disabled = false;
+                    deleteButton.textContent = 'Excluir';
+                }
+            });
+            actions.appendChild(deleteButton);
+        }
+        rows.appendChild(tr);
     });
+    tbody.replaceChildren(rows);
+    if (resultCount) resultCount.textContent = `${list.length} ${list.length === 1 ? 'usuário encontrado' : 'usuários encontrados'}`;
 }
 
 // Handle form submit for create/edit
@@ -226,6 +273,9 @@ async function handleUsuarioForm() {
             const u = await res.json().catch(() => null);
             if (!res.ok) throw new Error(u?.message || 'Não foi possível carregar os dados deste usuário.');
             if (!u) throw new Error('O servidor retornou uma resposta inválida ao carregar este usuário.');
+            if ((u.atribuicao || '').toLowerCase() === 'administrador') {
+                throw new Error('Contas administrativas são protegidas e não podem ser editadas por esta tela.');
+            }
             nome.value = u.Nome || '';
             email.value = u.Email || '';
             cpf.value = onlyDigits(u.cpf || '');
@@ -233,8 +283,15 @@ async function handleUsuarioForm() {
             if (matriculaField) matriculaField.value = u.matricula || '';
             if (cursoField) cursoField.value = u.curso || '';
             if (siapeField) siapeField.value = onlyDigits(u.siape || '');
+            updateFieldVisibility(tipo.value);
+            document.getElementById('usuario-loading')?.classList.add('hidden');
+            document.getElementById('usuario-fields')?.classList.remove('hidden');
+            const submitButton = form.querySelector('button[type="submit"]');
+            if (submitButton) submitButton.disabled = false;
         } catch (error) {
             showFormError(error.message || 'Falha de conexão ao carregar este usuário.');
+            const submitButton = form.querySelector('button[type="submit"]');
+            if (submitButton) submitButton.disabled = true;
         }
     }
 
@@ -289,4 +346,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetchAndRenderUsers();
     handleUsuarioForm();
+
+    const resetForm = document.getElementById('limpar-dados-form');
+    const resetConfirmation = document.getElementById('limpar-dados-confirmacao');
+    const resetButton = document.getElementById('limpar-dados-botao');
+    const resetResult = document.getElementById('limpar-dados-resultado');
+
+    if (resetForm && resetConfirmation && resetButton && resetResult) {
+        resetConfirmation.addEventListener('input', () => {
+            resetButton.disabled = resetConfirmation.value.trim().toUpperCase() !== 'APAGAR TODOS OS DADOS';
+        });
+
+        resetForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            if (resetConfirmation.value.trim().toUpperCase() !== 'APAGAR TODOS OS DADOS') return;
+            if (!window.confirm('Confirma apagar permanentemente os dados do portal, mantendo apenas seu login de administrador?')) return;
+
+            resetButton.disabled = true;
+            resetButton.textContent = 'Apagando dados...';
+            resetResult.className = 'mt-3 text-sm text-gray-700';
+            resetResult.textContent = '';
+
+            try {
+                const response = await fetch('/admin/api/dados', {
+                    method: 'DELETE',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                        'X-CSRF-TOKEN': getCsrf()
+                    },
+                    body: JSON.stringify({ confirmacao: 'APAGAR TODOS OS DADOS' })
+                });
+                const result = await response.json().catch(() => null);
+                if (!response.ok) throw new Error(result?.message || 'Não foi possível apagar os dados.');
+
+                resetResult.className = 'mt-3 text-sm font-medium text-green-800';
+                resetResult.textContent = result.message;
+                resetConfirmation.value = '';
+                await fetchAndRenderUsers();
+            } catch (error) {
+                resetResult.className = 'mt-3 text-sm font-medium text-red-800';
+                resetResult.textContent = error.message || 'Falha de conexão ao apagar os dados.';
+            } finally {
+                resetButton.textContent = 'Apagar dados do portal';
+                resetButton.disabled = resetConfirmation.value.trim().toUpperCase() !== 'APAGAR TODOS OS DADOS';
+            }
+        });
+    }
 });

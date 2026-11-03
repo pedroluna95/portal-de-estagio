@@ -81,7 +81,7 @@
             </div>
             <div class="flex-1">
                 <h3 class="text-lg font-semibold text-gray-900 mb-1">6. Registro e Controle de Horas</h3>
-                <p class="text-sm text-gray-600">Registre suas presenças diariamente no controle de horas do portal, como um ponto digital. Seu supervisor validará as horas registradas.</p>
+                <p class="text-sm text-gray-600">O supervisor define sua jornada e a carga horária diária. No controle de horas, marque apenas os dias trabalhados; a carga será preenchida automaticamente e enviada ao supervisor para validação.</p>
                 <a href="/controle-horas" class="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-[#0077fc] text-white rounded-lg text-sm font-medium hover:bg-[#0056c9] transition-colors">
                     <span class="material-symbols-outlined text-[16px]">calendar_month</span>
                     Registrar Presença

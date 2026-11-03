@@ -18,6 +18,7 @@ class Presenca extends Model
     protected $fillable = [
         'estagio_id',
         'data',
+        'minutos',
         'entrada',
         'saida',
         'modo',
@@ -29,7 +30,10 @@ class Presenca extends Model
 
     protected function casts(): array
     {
-        return ['data' => 'date'];
+        return [
+            'data' => 'date',
+            'minutos' => 'integer',
+        ];
     }
 
     public function estagio(): BelongsTo
@@ -39,6 +43,11 @@ class Presenca extends Model
 
     public function getMinutosAttribute(): int
     {
+        $minutos = $this->getAttributes()['minutos'] ?? null;
+        if ($minutos !== null) {
+            return (int) $minutos;
+        }
+
         $entrada = $this->getAttributes()['entrada'] ?? null;
         $saida = $this->getAttributes()['saida'] ?? null;
         if (! $entrada || ! $saida) {

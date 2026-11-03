@@ -21,7 +21,7 @@ services:
     image: mysql:8.0
     command: --port=3307
     ports:
-      - "3307:3307"
+      - "3307:3306"
     environment:
       MYSQL_DATABASE: projeto
       MYSQL_ROOT_PASSWORD: ""

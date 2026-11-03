@@ -28,7 +28,7 @@ class PresencaController extends Controller
 
         if (! $estagio->jornada) {
             throw ValidationException::withMessages([
-                'jornada' => 'Configure a jornada antes de registrar uma frequência.',
+                'jornada' => 'Aguarde o supervisor definir a jornada antes de registrar uma frequência.',
             ]);
         }
 
@@ -48,8 +48,6 @@ class PresencaController extends Controller
                     }
                 },
             ],
-            'entrada' => ['required', 'date_format:H:i'],
-            'saida' => ['required', 'date_format:H:i', 'after:entrada'],
             'observacao' => ['nullable', 'string', 'max:500'],
         ], [
             'data.required' => 'Informe a data da frequência.',
@@ -58,11 +56,6 @@ class PresencaController extends Controller
             'data.date_format' => 'Informe uma data válida.',
             'data.before' => 'Registre somente períodos encerrados. A data deve ser anterior a hoje.',
             'data.unique' => 'Já existe uma frequência registrada para esse dia.',
-            'entrada.required' => 'Informe o horário de entrada.',
-            'entrada.date_format' => 'O horário de entrada é inválido.',
-            'saida.required' => 'Informe o horário de saída.',
-            'saida.date_format' => 'O horário de saída é inválido.',
-            'saida.after' => 'A saída deve ser posterior à entrada.',
             'observacao.max' => 'A observação deve ter no máximo 500 caracteres.',
         ]);
 
@@ -79,9 +72,14 @@ class PresencaController extends Controller
             ]);
         }
 
-        if (Presenca::where('estagio_id', $estagio->id)->whereDate('data', $dados['data'])->exists()) {
+        if (
+            Presenca::where('estagio_id', $estagio->id)
+                ->whereDate('data', $dados['data'])
+                ->where('modo', $dados['modo'])
+                ->exists()
+        ) {
             throw ValidationException::withMessages([
-                'data' => 'Já existe uma frequência registrada para esse dia.',
+                'data' => 'Já existe um registro deste tipo para esse dia.',
             ]);
         }
 
@@ -89,8 +87,7 @@ class PresencaController extends Controller
             $presenca = Presenca::create([
                 'estagio_id' => $estagio->id,
                 'data' => $dados['data'],
-                'entrada' => $dados['entrada'],
-                'saida' => $dados['saida'],
+                'minutos' => (int) round($estagio->jornada->horas_diarias * 60),
                 'modo' => $dados['modo'],
                 'status' => $dados['modo'] === Presenca::MODO_OFICIAL
                     ? Presenca::STATUS_PENDENTE
@@ -105,7 +102,7 @@ class PresencaController extends Controller
                 $exception->getCode() === '23505'
             ) {
                 throw ValidationException::withMessages([
-                    'data' => 'Já existe uma frequência registrada para esse dia.',
+                    'data' => 'Já existe um registro deste tipo para esse dia.',
                 ]);
             }
 

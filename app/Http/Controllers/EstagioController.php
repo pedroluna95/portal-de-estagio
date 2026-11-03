@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Aluno;
 use App\Models\Estagio;
+use App\Models\Presenca;
 use App\Models\Supervisor;
 use App\Services\EstagioService;
 use Illuminate\Http\Request;
@@ -183,12 +184,17 @@ class EstagioController extends Controller
                         ->filter(fn (int $dia, string $campo) => $estagio->jornada->{$campo})
                         ->values()
                     : [],
-                'presencas' => $estagio->presencas->mapWithKeys(fn ($presenca) => [
-                    $presenca->data->toDateString() => [
-                        'modo' => $presenca->modo,
-                        'status' => $presenca->status,
-                    ],
-                ]),
+                'presencas' => $estagio->presencas
+                    ->groupBy(fn ($presenca) => $presenca->data->toDateString())
+                    ->map(function ($presencasDoDia) {
+                        $oficial = $presencasDoDia->firstWhere('modo', Presenca::MODO_OFICIAL);
+                        $presenca = $oficial ?? $presencasDoDia->first();
+
+                        return [
+                            'modo' => $presenca->modo,
+                            'status' => $presenca->status,
+                        ];
+                    }),
             ],
         ]);
     }

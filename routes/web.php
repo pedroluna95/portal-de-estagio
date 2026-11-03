@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\TablesController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AdminDataController;
 use App\Http\Controllers\EstagioController;
 use App\Http\Controllers\JornadaEstagioController;
 use App\Http\Controllers\PresencaController;
@@ -189,6 +190,8 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
     Route::view('tables', 'admin.tables.index');
     Route::get('api/tables', [TablesController::class, 'listTables']);
     Route::get('api/tables/{table}', [TablesController::class, 'rows']);
+    Route::delete('api/dados', [AdminDataController::class, 'destroy']);
+    Route::delete('api/dados', [AdminDataController::class, 'destroy']);
     Route::get('api/usuarios', [UsuarioController::class, 'index']);
     Route::post('api/usuarios', [UsuarioController::class, 'store']);
     Route::get('api/usuarios/{id}', [UsuarioController::class, 'show']);
