@@ -1,5 +1,7 @@
+```dockerfile
 FROM php:8.2-cli
 
+# Dependências do sistema e extensões PHP
 RUN apt-get update && apt-get install -y \
     git curl zip unzip \
     libzip-dev libonig-dev libxml2-dev \
@@ -21,15 +23,18 @@ RUN ln -sf /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
 
 WORKDIR /var/www
 
-COPY . .
-
 # Dependências PHP
+COPY composer.json composer.lock ./
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # Dependências Node
-RUN npm install
+COPY package.json package-lock.json ./
+RUN npm ci
 
-# Compilação Vite
+# Código do projeto
+COPY . .
+
+# Compilação dos arquivos CSS e JS
 RUN npm run build
 
 # Permissões
@@ -39,3 +44,4 @@ RUN chown -R www-data:www-data storage bootstrap/cache \
 EXPOSE 8000
 
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+```

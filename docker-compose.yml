@@ -30,6 +30,6 @@ services:
       - dbdata:/var/lib/mysql
 
 volumes:
-  dbdata:
   vendor_data:
   node_modules_data:
+  dbdata:
