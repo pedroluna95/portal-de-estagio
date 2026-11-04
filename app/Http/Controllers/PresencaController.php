@@ -87,7 +87,7 @@ class PresencaController extends Controller
             $presenca = Presenca::create([
                 'estagio_id' => $estagio->id,
                 'data' => $dados['data'],
-                'minutos' => (int) round($estagio->jornada->horas_diarias * 60),
+                'horas' => (float) $estagio->jornada->horas_diarias,
                 'modo' => $dados['modo'],
                 'status' => $dados['modo'] === Presenca::MODO_OFICIAL
                     ? Presenca::STATUS_PENDENTE

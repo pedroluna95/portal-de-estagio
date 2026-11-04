@@ -18,7 +18,7 @@ class Presenca extends Model
     protected $fillable = [
         'estagio_id',
         'data',
-        'minutos',
+        'horas',
         'entrada',
         'saida',
         'modo',
@@ -32,7 +32,7 @@ class Presenca extends Model
     {
         return [
             'data' => 'date',
-            'minutos' => 'integer',
+            'horas' => 'float',
         ];
     }
 
@@ -43,9 +43,9 @@ class Presenca extends Model
 
     public function getMinutosAttribute(): int
     {
-        $minutos = $this->getAttributes()['minutos'] ?? null;
-        if ($minutos !== null) {
-            return (int) $minutos;
+        $horas = $this->getAttributes()['horas'] ?? null;
+        if ($horas !== null) {
+            return (int) round((float) $horas * 60);
         }
 
         $entrada = $this->getAttributes()['entrada'] ?? null;
@@ -62,6 +62,11 @@ class Presenca extends Model
 
     public function getHorasAttribute(): float
     {
+        $horas = $this->getAttributes()['horas'] ?? null;
+        if ($horas !== null) {
+            return (float) $horas;
+        }
+
         return round($this->minutos / 60, 2);
     }
 }
