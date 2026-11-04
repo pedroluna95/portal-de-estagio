@@ -25,7 +25,7 @@
         <div class="bg-white rounded-2xl shadow-xl p-8">
             {{-- Passo 1: Seleção de tipo --}}
             <div id="passo-tipo" class="grid grid-cols-1 md:grid-cols-1 gap-4 {{ $errors->any() || !empty($tipoInicial) ? 'hidden' : '' }}">
-                <a href="?tipo=aluno" onclick="selecionarTipo('aluno'); return false;" class="p-6 border-2 border-gray-200 rounded-xl hover:border-[#0077fc] hover:bg-blue-50 transition-all text-left group block">
+                <a href="?tipo=aluno" onclick="selecionarTipo('aluno'); return false;" class="card-figma p-6 border-2 border-gray-200 rounded-xl text-left group block">
                     <div class="flex items-start gap-4">
                         <div class="p-3 bg-blue-50 group-hover:bg-[#0077fc] rounded-lg transition-colors">
                             <span class="material-symbols-outlined text-[#0077fc] group-hover:text-white">person</span>
@@ -37,7 +37,7 @@
                     </div>
                 </a>
 
-                <a href="?tipo=supervisor" onclick="selecionarTipo('supervisor'); return false;" class="p-6 border-2 border-gray-200 rounded-xl hover:border-[#0077fc] hover:bg-blue-50 transition-all text-left group block">
+                <a href="?tipo=supervisor" onclick="selecionarTipo('supervisor'); return false;" class="card-figma p-6 border-2 border-gray-200 rounded-xl text-left group block">
                     <div class="flex items-start gap-4">
                         <div class="p-3 bg-blue-50 group-hover:bg-[#0077fc] rounded-lg transition-colors">
                             <span class="material-symbols-outlined text-[#0077fc] group-hover:text-white">manage_accounts</span>
@@ -49,7 +49,7 @@
                     </div>
                 </a>
 
-                <a href="?tipo=orientador" onclick="selecionarTipo('orientador'); return false;" class="p-6 border-2 border-gray-200 rounded-xl hover:border-[#0077fc] hover:bg-blue-50 transition-all text-left group block">
+                <a href="?tipo=orientador" onclick="selecionarTipo('orientador'); return false;" class="card-figma p-6 border-2 border-gray-200 rounded-xl text-left group block">
                     <div class="flex items-start gap-4">
                         <div class="p-3 bg-blue-50 group-hover:bg-[#0077fc] rounded-lg transition-colors">
                             <span class="material-symbols-outlined text-[#0077fc] group-hover:text-white">school</span>
