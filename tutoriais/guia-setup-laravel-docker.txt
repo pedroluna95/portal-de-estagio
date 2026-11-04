@@ -1,225 +1,77 @@
-# Guia — Rodar o projeto pela primeira vez em outro PC
+GUIA RÁPIDO — RODAR O PROJETO EM OUTRO PC
 
-## 1. Instalar o necessário
+1. INSTALAR
 
-No PC novo, instale:
+Instale no computador:
 
-* **Docker Desktop**
-* **Git**
+- Docker Desktop
+- Git
 
-Não precisa instalar **XAMPP, PHP, Composer, MySQL ou Node.js** no Windows, porque eles serão executados dentro dos containers Docker.
+Não precisa instalar XAMPP, PHP, Composer, MySQL ou Node.js.
 
----
+2. BAIXAR O PROJETO
 
-## 2. Baixar o projeto
+Abra o PowerShell e execute:
 
-Abra o PowerShell e faça:
+git clone URL_DO_REPOSITORIO
+cd portal-de-estagio
 
-```bash
-git clone URL_DO_SEU_REPOSITORIO
-```
+3. CONFIGURAR O .ENV
 
-Entre na pasta do projeto:
+Se não existir o arquivo .env:
 
-```bash
-cd PROJETO-FINAL-2026
-```
-
----
-
-## 3. Criar o `.env`
-
-Se o arquivo `.env` não estiver no GitHub, copie o `.env.example`:
-
-```powershell
 copy .env.example .env
-```
 
-Abra o `.env` e verifique se o banco está configurado assim:
+Confira se o banco está configurado assim:
 
-```env
 DB_CONNECTION=mysql
 DB_HOST=db
 DB_PORT=3306
 DB_DATABASE=projeto
 DB_USERNAME=root
 DB_PASSWORD=root
-```
 
-> **Importante:** dentro do Docker, o `DB_HOST` deve ser `db`, e não `127.0.0.1` ou `localhost`.
-
----
-
-## 4. Criar e iniciar os containers
+4. INICIAR O PROJETO
 
 Execute:
 
-```bash
 docker compose up -d --build
-```
 
-Confira se os containers estão funcionando:
+5. CONFIGURAR O LARAVEL
 
-```bash
-docker compose ps
-```
+Execute um comando por vez:
 
-O `app` e o `db` devem aparecer como **Up**.
-
----
-
-## 5. Instalar as dependências do Laravel
-
-Execute:
-
-```bash
 docker compose exec app composer install
-```
 
-Isso instala as dependências do `composer.json` dentro do container, incluindo o **Laravel Pail**, caso ele esteja listado no projeto.
-
-Depois gere a chave da aplicação:
-
-```bash
 docker compose exec app php artisan key:generate
-```
 
-Agora rode as migrations:
-
-```bash
 docker compose exec app php artisan migrate
-```
 
-> **Atenção:** se o projeto já possuir um banco/arquivo SQL que precisa ser importado, **não rode o `migrate` antes de importar esse banco**. Nesse caso, importe o banco primeiro.
-
----
-
-## 6. Instalar as dependências do Node
-
-Execute:
-
-```bash
 docker compose exec app npm install
-```
 
-Isso instala as dependências do `package.json` dentro do container.
-
----
-
-## 7. Limpar os caches do Laravel
-
-Depois que o Composer estiver instalado, execute:
-
-```bash
 docker compose exec app php artisan optimize:clear
-```
 
-Se aparecer:
+6. ACESSAR O PROJETO
 
-```text
-Class "Laravel\Pail\PailServiceProvider" not found
-```
+Abra o navegador:
 
-significa que as dependências do Composer não foram instaladas corretamente. Nesse caso, rode novamente:
-
-```bash
-docker compose exec app composer install
-```
-
-e depois:
-
-```bash
-docker compose exec app php artisan optimize:clear
-```
-
----
-
-## 8. Rodar o projeto
-
-Se o `docker-compose.yml` já estiver configurado para iniciar o servidor Laravel automaticamente, basta acessar:
-
-```text
 http://localhost:8000
-```
-
-Para conferir os containers:
-
-```bash
-docker compose ps
-```
 
 ---
 
-# 🔄 Nas próximas vezes
+PRÓXIMAS VEZES
 
-Depois que o projeto já foi configurado uma vez, **não precisa repetir todo o processo**.
+Para iniciar:
 
-Entre na pasta:
-
-```bash
-cd PROJETO-FINAL-2026
-```
-
-Inicie os containers:
-
-```bash
 docker compose up -d
-```
 
-Acesse:
+Para desligar:
 
-```text
-http://localhost:8000
-```
-
-### Para desligar o projeto:
-
-```bash
 docker compose down
-```
 
-### Para ligar novamente:
-
-```bash
-docker compose up -d
-```
-
----
-
-## ⚠️ Resumo rápido
-
-### Primeiro uso:
-
-```bash
-git clone URL_DO_SEU_REPOSITORIO
-cd PROJETO-FINAL-2026
-
-copy .env.example .env
-
-composer install
-
-docker compose up -d --build
+Pronto! Não precisa repetir a configuração inicial.
 
 
-docker compose exec app php artisan key:generate
-docker compose exec app php artisan migrate
-docker compose exec app npm install
-docker compose exec app php artisan optimize:clear
-```
 
-Depois:
-
-```text
-http://localhost:8000
-```
-
-### Próximas vezes:
-
-```bash
-cd PROJETO-FINAL-2026
-docker compose up -d
-```
-
-E pronto.
-
-> Se tiver alguma dúvida ou aparecer algum erro, copie o erro completo e jogue no GPT.
+OBSERVAÇÃO:
+Caso queira que outros dispositivos se conectem ao programa, entre em ip.da.maquina:8000
