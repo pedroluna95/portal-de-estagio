@@ -23,3 +23,10 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+__pycache__/
+*.pyc
+storage/app/*.txt
+storage/app/*.tsv
+storage/app/*.json
+storage/app/imports/
+

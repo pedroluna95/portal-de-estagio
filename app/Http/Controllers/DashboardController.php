@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\EmpresasConveniadas;
 use App\Models\Estagio;
 use App\Models\Presenca;
 use App\Models\Supervisor;
@@ -18,6 +19,7 @@ class DashboardController extends Controller
         $usuario = $this->estagioService->usuarioAtual($request);
         $dados = [
             'total_usuarios' => Usuario::count(),
+            'total_empresas' => EmpresasConveniadas::count(),
             'papelDashboard' => $usuario->tipo,
         ];
 

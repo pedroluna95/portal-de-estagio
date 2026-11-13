@@ -41,7 +41,9 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             $requestId = (string) str()->uuid();
-            request()->attributes->set('error_request_id', $requestId);
+            if (app()->bound('request')) {
+                request()->attributes->set('error_request_id', $requestId);
+            }
             Log::error('Erro inesperado na aplicação', [
                 'request_id' => $requestId,
                 'exception' => $exception,

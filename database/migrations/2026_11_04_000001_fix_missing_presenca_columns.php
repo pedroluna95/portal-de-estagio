@@ -9,17 +9,9 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (Schema::hasColumn('presencas', 'minutos') && ! Schema::hasColumn('presencas', 'horas')) {
-            DB::statement('UPDATE presencas SET horas = minutos / 60 WHERE minutos IS NOT NULL');
-        }
-
         Schema::table('presencas', function (Blueprint $table) {
             if (! Schema::hasColumn('presencas', 'horas')) {
                 $table->decimal('horas', 5, 2)->nullable()->after('data');
-            }
-
-            if (Schema::hasColumn('presencas', 'minutos')) {
-                $table->dropColumn('minutos');
             }
 
             if (! Schema::hasColumn('presencas', 'modo')) {
@@ -30,6 +22,14 @@ return new class extends Migration
                 $table->string('parecer_supervisor', 500)->nullable()->after('parecer_orientador');
             }
         });
+
+        if (Schema::hasColumn('presencas', 'minutos')) {
+            DB::statement('UPDATE presencas SET horas = minutos / 60 WHERE minutos IS NOT NULL');
+
+            Schema::table('presencas', function (Blueprint $table) {
+                $table->dropColumn('minutos');
+            });
+        }
     }
 
     public function down(): void

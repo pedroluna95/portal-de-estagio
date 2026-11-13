@@ -1,77 +1,85 @@
-GUIA RÁPIDO — RODAR O PROJETO EM OUTRO PC
+========================================================================
+GUIA RÁPIDO — RODAR O PROJETO EM OUTRO PC (VIA DOCKER)
+========================================================================
 
-1. INSTALAR
+OBS: Para a explicação completa de como o sistema funciona, fluxo dos dados,
+diagramas e regras de negócio, consulte o arquivo detalhado:
+tutoriais/MANUAL_DO_SISTEMA_E_GUIA_DO_DESENVOLVEDOR.md
 
-Instale no computador:
+------------------------------------------------------------------------
+1. PROGRAMAS NECESSÁRIOS
+------------------------------------------------------------------------
+Instale no computador físico apenas:
+- Docker Desktop (https://www.docker.com/products/docker-desktop/)
+- Git (https://git-scm.com/downloads)
 
-- Docker Desktop
-- Git
+NÃO precisa instalar XAMPP, PHP, Composer, MySQL, Python ou Node.js.
 
-Não precisa instalar XAMPP, PHP, Composer, MySQL ou Node.js.
-
+------------------------------------------------------------------------
 2. BAIXAR O PROJETO
+------------------------------------------------------------------------
+Abra o PowerShell ou Terminal e execute:
 
-Abra o PowerShell e execute:
-
-git clone URL_DO_REPOSITORIO
+git clone URL_DO_REPOSITORIO portal-de-estagio
 cd portal-de-estagio
 
-3. CONFIGURAR O .ENV
+------------------------------------------------------------------------
+3. CONFIGURAR O ARQUIVO .ENV
+------------------------------------------------------------------------
+Se ainda não existir o arquivo .env:
 
-Se não existir o arquivo .env:
+copy .env.example .env       (no Windows)
+cp .env.example .env         (no Linux/Mac)
 
-copy .env.example .env
-
-Confira se o banco está configurado assim:
+Confira se o banco está configurado assim no .env:
 
 DB_CONNECTION=mysql
 DB_HOST=db
-DB_PORT=3306
+DB_PORT=3307
 DB_DATABASE=projeto
 DB_USERNAME=root
-DB_PASSWORD=root
+DB_PASSWORD=
 
-4. INICIAR O PROJETO
-
+------------------------------------------------------------------------
+4. INICIAR OS CONTAINERS DOCKER
+------------------------------------------------------------------------
 Execute:
 
 docker compose up -d --build
 
-5. CONFIGURAR O LARAVEL
-
-Execute um comando por vez:
+------------------------------------------------------------------------
+5. CONFIGURAR O LARAVEL PELA PRIMEIRA VEZ
+------------------------------------------------------------------------
+Execute os comandos abaixo (um por vez):
 
 docker compose exec app composer install
-
 docker compose exec app php artisan key:generate
-
 docker compose exec app php artisan migrate
-
+docker compose exec app php artisan db:seed
 docker compose exec app npm install
-
+docker compose exec app npm run build
 docker compose exec app php artisan optimize:clear
 
-6. ACESSAR O PROJETO
+* O comando "php artisan db:seed" já carrega automaticamente o usuário
+  administrador e mais de 1.600 empresas conveniadas com suas cidades!
 
-Abra o navegador:
-
+------------------------------------------------------------------------
+6. ACESSAR O SISTEMA NO NAVEGADOR
+------------------------------------------------------------------------
+Abra seu navegador:
 http://localhost:8000
 
----
+Credenciais do Administrador Padrão:
+E-mail: admin@cefet.br
+Senha:  admin123
 
-PRÓXIMAS VEZES
-
-Para iniciar:
-
+========================================================================
+PRÓXIMAS VEZES QUE FOR TRABALHAR NO PROJETO:
+========================================================================
+Para ligar o projeto:
 docker compose up -d
 
-Para desligar:
-
+Para desligar o projeto:
 docker compose down
 
-Pronto! Não precisa repetir a configuração inicial.
-
-
-
-OBSERVAÇÃO:
-Caso queira que outros dispositivos se conectem ao programa, entre em ip.da.maquina:8000
+(Não precisa repetir os passos de instalação acima).

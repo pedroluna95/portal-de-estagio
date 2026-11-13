@@ -12,12 +12,14 @@
             <p class="text-2xl font-bold text-gray-900">{{ $total_usuarios }}</p>
             <p class="text-xs text-gray-500 mt-1"></p>
         </div>
-        <div class="card-figma rounded-xl p-6 shadow-sm border border-gray-200">
-            <div class="inline-flex p-3 rounded-lg bg-green-50 text-green-600 mb-4"><span class="material-symbols-outlined">business</span></div>
-            <h3 class="text-sm text-gray-600 mb-1">Empresas Conveniadas</h3>
-            <p class="text-2xl font-bold text-gray-900">48</p>
-            <p class="text-xs text-gray-500 mt-1">3 aguardando aprovação</p>
-        </div>
+        <a href="{{ route('admin.empresas') }}" class="block group">
+            <div class="card-figma rounded-xl p-6 shadow-sm border border-gray-200 bg-white group-hover:border-[#0077fc] transition-all">
+                <div class="inline-flex p-3 rounded-lg bg-green-50 text-green-600 mb-4"><span class="material-symbols-outlined">business</span></div>
+                <h3 class="text-sm text-gray-600 mb-1 group-hover:text-[#0077fc] font-medium">Empresas Conveniadas</h3>
+                <p class="text-2xl font-bold text-gray-900">{{ number_format($total_empresas ?? \App\Models\EmpresasConveniadas::count(), 0, ',', '.') }}</p>
+                <p class="text-xs text-gray-500 mt-1">Clique para importar PDF ou consultar</p>
+            </div>
+        </a>
         <div class="card-figma rounded-xl p-6 shadow-sm border border-gray-200">
             <div class="inline-flex p-3 rounded-lg bg-orange-50 text-orange-600 mb-4"><span class="material-symbols-outlined">trending_up</span></div>
             <h3 class="text-sm text-gray-600 mb-1">Estágios Ativos</h3>
@@ -42,15 +44,17 @@
                     </div>
                 </div>
                 </a>
-                <button class="w-full flex items-center gap-3 p-4 border-2 border-gray-200 rounded-lg hover:border-[#0077fc] hover:bg-blue-50 transition-all text-left card-figma">
-                    <div class="p-2 bg-green-50 rounded-lg">
-                        <span class="material-symbols-outlined text-green-600">add_circle</span>
+                <a href="{{ route('admin.empresas') }}" class="w-full block group">
+                    <div class="w-full flex items-center gap-3 p-4 border-2 border-gray-200 rounded-lg hover:border-[#0077fc] hover:bg-blue-50 transition-all text-left card-figma">
+                        <div class="p-2 bg-green-50 rounded-lg">
+                            <span class="material-symbols-outlined text-green-600">upload_file</span>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-900 group-hover:text-[#0077fc]">Importar e Gerenciar Convênios</p>
+                            <p class="text-sm text-gray-500">Upload de PDF, geração de .CSV e sincronização</p>
+                        </div>
                     </div>
-                    <div>
-                        <p class="font-medium">Adicionar Empresa</p>
-                        <p class="text-sm text-gray-500">Cadastrar nova empresa conveniada</p>
-                    </div>
-                </button>
+                </a>
                 <button class="w-full flex items-center gap-3 p-4 border-2 border-gray-200 rounded-lg hover:border-[#0077fc] hover:bg-blue-50 transition-all text-left card-figma">
                     <div class="p-2 bg-orange-50 rounded-lg">
                         <span class="material-symbols-outlined text-orange-600">settings</span>

@@ -3,6 +3,8 @@
 use App\Http\Controllers\TablesController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminDataController;
+use App\Http\Controllers\AdminEmpresasController;
+use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\EstagioController;
 use App\Http\Controllers\JornadaEstagioController;
 use App\Http\Controllers\PresencaController;
@@ -154,7 +156,7 @@ Route::middleware('web')->group(function () {
 
             return view('perfil', ['cursoAluno' => $usuario->curso]);
         });
-        Route::view('/empresas', 'empresas');
+        Route::get('/empresas', [EmpresaController::class, 'index'])->name('empresas.index');
         Route::get('/dashboard', [DashboardController::class, 'show'])->name('dashboard');
         Route::get('/controle-horas', [EstagioController::class, 'index'])->name('controle-horas');
         Route::get('/estagios', [EstagioController::class, 'index'])->name('estagios.index');
@@ -184,6 +186,13 @@ Route::middleware('web')->group(function () {
 });
 
 Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
+    Route::get('empresas', [AdminEmpresasController::class, 'index'])->name('admin.empresas');
+    Route::post('empresas/importar', [AdminEmpresasController::class, 'importar'])->name('admin.empresas.importar');
+    Route::post('empresas/limpar', [AdminEmpresasController::class, 'limpar'])->name('admin.empresas.limpar');
+    Route::post('empresas/enriquecer-lote', [AdminEmpresasController::class, 'enriquecerLote'])->name('admin.empresas.enriquecer_lote');
+    Route::post('empresas/salvar-seeder', [AdminEmpresasController::class, 'salvarSeeder'])->name('admin.empresas.salvar_seeder');
+    Route::get('empresas/download-csv/{arquivo}', [AdminEmpresasController::class, 'downloadCsv'])->name('admin.empresas.download_csv');
+    Route::get('empresas/exportar-csv', [AdminEmpresasController::class, 'exportarBancoCsv'])->name('admin.empresas.exportar_csv');
     Route::view('usuarios', 'admin.usuarios.index');
     Route::view('usuarios/create', 'admin.usuarios.create');
     Route::get('usuarios/{id}/edit', fn ($id) => view('admin.usuarios.edit', ['id' => $id]));
