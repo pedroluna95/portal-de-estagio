@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\EmpresasConveniadas;
 use App\Services\CnpjEnriquecimentoService;
 use App\Services\EmpresaConveniadaImportService;
@@ -10,7 +11,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class AdminEmpresasController extends Controller
+class EmpresasController extends Controller
 {
     public function __construct(
         private readonly EmpresaConveniadaImportService $importService,

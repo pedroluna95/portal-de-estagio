@@ -1,21 +1,21 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
-use App\Models\Usuario;
+use App\Http\Controllers\Controller;
 use App\Models\Aluno;
 use App\Models\Orientador;
 use App\Models\Supervisor;
+use App\Models\Usuario;
+use App\Rules\ValidarCpf;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Database\QueryException;
 use Illuminate\Validation\Rule;
-use App\Rules\ValidarCpf;
 
-
-class UsuarioController
+class UsuariosController extends Controller
 {
     private const TIPOS = ['aluno', 'orientador', 'supervisor'];
 
@@ -81,7 +81,6 @@ class UsuarioController
 
         try {
             $usuario = DB::transaction(function () use ($data) {
-
                 $atribuicaoId = DB::table('atribuicoes')
                     ->whereRaw(
                         'LOWER(Nome_atribuicao) = ?',
@@ -125,7 +124,6 @@ class UsuarioController
                             'user_ID' => $usuario->user_ID,
                         ]);
                         break;
-
                 }
 
                 return $usuario;
@@ -135,7 +133,6 @@ class UsuarioController
                 $usuario->fresh(),
                 201
             );
-
         } catch (\Throwable $e) {
             return $this->error(
                 'Não foi possível cadastrar o usuário.',
@@ -287,8 +284,7 @@ class UsuarioController
 
                     Orientador::where('user_ID', $usuario->user_ID)->delete();
                     Supervisor::where('user_ID', $usuario->user_ID)->delete();
-                }
-                elseif ($tipoNovo === 'orientador') {
+                } elseif ($tipoNovo === 'orientador') {
                     $orientadorExistente = Orientador::where('user_ID', $usuario->user_ID)->first();
                     Orientador::updateOrCreate(
                         ['user_ID' => $usuario->user_ID],
@@ -297,8 +293,7 @@ class UsuarioController
 
                     Aluno::where('user_id', $usuario->user_ID)->delete();
                     Supervisor::where('user_ID', $usuario->user_ID)->delete();
-                }
-                elseif ($tipoNovo === 'supervisor') {
+                } elseif ($tipoNovo === 'supervisor') {
                     Supervisor::updateOrCreate(['user_ID' => $usuario->user_ID]);
                     Aluno::where('user_id', $usuario->user_ID)->delete();
                     Orientador::where('user_ID', $usuario->user_ID)->delete();
@@ -306,7 +301,6 @@ class UsuarioController
             });
 
             return response()->json($usuario->fresh());
-
         } catch (\Throwable $e) {
             if ($e instanceof QueryException && (int) ($e->errorInfo[1] ?? 0) === 1451) {
                 return $this->error(
@@ -404,20 +398,20 @@ class UsuarioController
             'nome' => [
                 'required',
                 'string',
-                'max:60'
+                'max:60',
             ],
 
             'email' => [
                 'required',
                 'email',
                 'max:45',
-                'unique:usuarios,Email'
+                'unique:usuarios,Email',
             ],
 
             'senha' => [
                 'required',
                 'string',
-                'min:6'
+                'min:6',
             ],
 
             'cpf' => [
@@ -427,10 +421,9 @@ class UsuarioController
                 new ValidarCpf,
             ],
 
-
             'tipo' => [
                 'required',
-                Rule::in(self::TIPOS)
+                Rule::in(self::TIPOS),
             ],
 
             'matricula' => [
@@ -438,21 +431,21 @@ class UsuarioController
                 'required_if:tipo,aluno',
                 'string',
                 'max:30',
-                Rule::unique('alunos', 'matricula')
+                Rule::unique('alunos', 'matricula'),
             ],
 
             'curso' => [
                 'nullable',
                 'required_if:tipo,aluno',
                 'string',
-                Rule::in(['Informatica', 'Automacao Industrial', 'Telecomunicações', 'Enfermagem'])
+                Rule::in(['Informatica', 'Automacao Industrial', 'Telecomunicações', 'Enfermagem']),
             ],
 
             'siape' => [
                 'nullable',
                 'required_if:tipo,orientador',
                 'digits:8',
-                Rule::unique('orientadores', 'siape')
+                Rule::unique('orientadores', 'siape'),
             ],
         ], [
             'nome.required' => 'Informe o nome do usuário.',
@@ -490,7 +483,7 @@ class UsuarioController
             $message = $this->describeException($message, $exception);
             Log::error($message, [
                 'request_id' => $requestId,
-                'exception' => $exception
+                'exception' => $exception,
             ]);
             $message .= " Tente novamente. Código de atendimento: {$requestId}";
         }
@@ -498,7 +491,7 @@ class UsuarioController
         return response()->json([
             'message' => $message,
             'errors' => $errors,
-            'request_id' => $requestId
+            'request_id' => $requestId,
         ], $status);
     }
 

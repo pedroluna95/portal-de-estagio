@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Empresa;
 
+use App\Http\Controllers\Controller;
 use App\Models\EmpresasConveniadas;
 use Illuminate\Http\Request;
 
@@ -57,7 +58,7 @@ class EmpresaController extends Controller
             ->orderBy('uf')
             ->pluck('uf');
 
-        return view('empresas', [
+        return view('empresas.index', [
             'empresas'       => $empresas,
             'stats'          => $stats,
             'busca'          => $busca,

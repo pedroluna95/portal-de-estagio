@@ -22,7 +22,7 @@ class RegisterController extends Controller
             abort(404);
         }
 
-        return view('cadastro', ['tipoInicial' => $tipo ? strtolower($tipo) : null]);
+        return view('auth.cadastro', ['tipoInicial' => $tipo ? strtolower($tipo) : null]);
     }
 
     /**

@@ -1,17 +1,17 @@
 <?php
 
-use App\Http\Controllers\AdminDataController;
-use App\Http\Controllers\AdminEmpresasController;
+use App\Http\Controllers\Admin\DataController as AdminDataController;
+use App\Http\Controllers\Admin\EmpresasController as AdminEmpresasController;
+use App\Http\Controllers\Admin\TablesController;
+use App\Http\Controllers\Admin\UsuariosController;
 use App\Http\Controllers\Aluno\PerfilController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\EmpresaController;
-use App\Http\Controllers\EstagioController;
-use App\Http\Controllers\JornadaEstagioController;
-use App\Http\Controllers\PresencaController;
-use App\Http\Controllers\TablesController;
-use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\Empresa\EmpresaController;
+use App\Http\Controllers\Estagio\EstagioController;
+use App\Http\Controllers\Estagio\JornadaEstagioController;
+use App\Http\Controllers\Estagio\PresencaController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\SessionAuthMiddleware;
 use Illuminate\Http\Request;
@@ -44,7 +44,7 @@ Route::post('/cadastro', [RegisterController::class, 'register']);
 // Rotas Autenticadas (Alunos, Professores, Orientadores, Supervisores)
 Route::middleware(['web', SessionAuthMiddleware::class])->group(function () {
     Route::redirect('/aluno', '/dashboard');
-    Route::view('/tutorial', 'tutorial')->name('tutorial');
+    Route::view('/tutorial', 'aluno.tutorial')->name('tutorial');
     Route::get('/perfil', [PerfilController::class, 'show'])->name('perfil');
     Route::get('/dashboard', [DashboardController::class, 'show'])->name('dashboard');
 
@@ -101,9 +101,9 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
     Route::delete('api/dados', [AdminDataController::class, 'destroy']);
 
     // API de Usuários para CRUD dinâmico
-    Route::get('api/usuarios', [UsuarioController::class, 'index']);
-    Route::post('api/usuarios', [UsuarioController::class, 'store']);
-    Route::get('api/usuarios/{id}', [UsuarioController::class, 'show']);
-    Route::put('api/usuarios/{id}', [UsuarioController::class, 'update']);
-    Route::delete('api/usuarios/{id}', [UsuarioController::class, 'destroy']);
+    Route::get('api/usuarios', [UsuariosController::class, 'index']);
+    Route::post('api/usuarios', [UsuariosController::class, 'store']);
+    Route::get('api/usuarios/{id}', [UsuariosController::class, 'show']);
+    Route::put('api/usuarios/{id}', [UsuariosController::class, 'update']);
+    Route::delete('api/usuarios/{id}', [UsuariosController::class, 'destroy']);
 });

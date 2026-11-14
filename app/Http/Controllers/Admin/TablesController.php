@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class TablesController
+class TablesController extends Controller
 {
     private const TABLES = [
         'usuarios' => ['user_ID', 'Nome', 'Email', 'atribuicao_id', 'cpf', 'created_at', 'updated_at'],
@@ -19,7 +20,9 @@ class TablesController
 
     public function rows(Request $request, string $table)
     {
-        if (! array_key_exists($table, self::TABLES)) return response()->json(['message' => 'Tabela não autorizada.'], 404);
+        if (! array_key_exists($table, self::TABLES)) {
+            return response()->json(['message' => 'Tabela não autorizada.'], 404);
+        }
 
         try {
             $limit = min(max((int) $request->query('limit', 100), 1), 1000);

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Estagio;
 
+use App\Http\Controllers\Controller;
 use App\Models\Aluno;
 use App\Models\Estagio;
 use App\Models\Presenca;
