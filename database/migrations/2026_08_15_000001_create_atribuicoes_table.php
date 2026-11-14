@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -9,7 +10,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('atribuicoes', function (Blueprint $table) {
-            $table->increments('Atribuicao_ID')->primary();
+            $table->increments('Atribuicao_ID');
             $table->string('Nome_atribuicao', 45);
         });
 
@@ -19,7 +20,6 @@ return new class extends Migration
             ['Nome_atribuicao' => 'Orientador'],
             ['Nome_atribuicao' => 'Supervisor'],
         ]);
-
     }
 
     public function down(): void

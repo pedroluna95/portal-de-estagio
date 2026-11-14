@@ -12,12 +12,10 @@ return new class extends Migration
     {
         Schema::create('usuarios', function (Blueprint $table) {
             $table->increments('user_ID');
-
             $table->string('cpf', 14)->nullable();
             $table->string('Nome', 60);
             $table->string('Email', 45)->unique();
             $table->string('Senha', 255);
-
             $table->unsignedInteger('atribuicao_id')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable();
@@ -26,7 +24,7 @@ return new class extends Migration
                 ->references('Atribuicao_ID')
                 ->on('atribuicoes')
                 ->onDelete('set null');
-});
+        });
 
         // Administrador padrão
         DB::table('usuarios')->insert([

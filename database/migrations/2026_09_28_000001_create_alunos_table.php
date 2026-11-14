@@ -8,8 +8,6 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::dropIfExists('alunos');
-
         Schema::create('alunos', function (Blueprint $table) {
             $table->unsignedInteger('user_id')->primary();
             $table->string('nome', 60);

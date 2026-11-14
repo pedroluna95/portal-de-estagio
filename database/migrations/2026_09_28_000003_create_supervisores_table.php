@@ -10,18 +10,15 @@ return new class extends Migration
     {
         Schema::create('supervisores', function (Blueprint $table) {
             $table->increments('supervisor_ID');
-
             $table->unsignedInteger('user_ID')->unique();
+            $table->string('cargo', 100)->nullable();
+            $table->string('empresa', 150)->nullable();
+            $table->timestamps();
 
             $table->foreign('user_ID')
                 ->references('user_ID')
                 ->on('usuarios')
                 ->onDelete('cascade');
-
-            $table->string('cargo', 100)->nullable();
-            $table->string('empresa', 150)->nullable();
-
-            $table->timestamps();
         });
     }
 

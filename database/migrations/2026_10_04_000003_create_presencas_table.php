@@ -14,14 +14,17 @@ return new class extends Migration
                 ->constrained('estagios')
                 ->restrictOnDelete();
             $table->date('data');
-            $table->time('entrada');
-            $table->time('saida');
+            $table->decimal('horas', 5, 2)->nullable();
+            $table->time('entrada')->nullable();
+            $table->time('saida')->nullable();
             $table->string('status', 20)->default('pendente');
+            $table->string('modo', 20)->default('oficial');
             $table->string('observacao', 500)->nullable();
             $table->string('parecer_orientador', 500)->nullable();
+            $table->string('parecer_supervisor', 500)->nullable();
             $table->timestamps();
 
-            $table->unique(['estagio_id', 'data']);
+            $table->unique(['estagio_id', 'data', 'modo']);
             $table->index(['estagio_id', 'status']);
         });
     }

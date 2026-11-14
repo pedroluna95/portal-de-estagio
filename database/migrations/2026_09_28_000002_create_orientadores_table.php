@@ -10,18 +10,15 @@ return new class extends Migration
     {
         Schema::create('orientadores', function (Blueprint $table) {
             $table->increments('orientador_ID');
-
             $table->unsignedInteger('user_ID')->unique();
+            $table->string('siape', 20)->unique();
+            $table->string('area', 100)->nullable();
+            $table->timestamps();
 
             $table->foreign('user_ID')
                 ->references('user_ID')
                 ->on('usuarios')
                 ->onDelete('cascade');
-
-            $table->string('siape', 20)->unique();
-            $table->string('area', 100)->nullable();
-            
-            $table->timestamps();
         });
     }
 

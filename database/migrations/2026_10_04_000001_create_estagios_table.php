@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedInteger('aluno_id');
             $table->unsignedInteger('orientador_id');
+            $table->unsignedInteger('supervisor_id')->nullable();
             $table->string('local', 150);
             $table->date('data_inicio');
             $table->date('data_fim');
@@ -28,8 +29,14 @@ return new class extends Migration
                 ->on('orientadores')
                 ->restrictOnDelete();
 
+            $table->foreign('supervisor_id')
+                ->references('supervisor_ID')
+                ->on('supervisores')
+                ->nullOnDelete();
+
             $table->index(['aluno_id', 'status']);
             $table->index(['orientador_id', 'status']);
+            $table->index(['supervisor_id', 'status']);
         });
     }
 
