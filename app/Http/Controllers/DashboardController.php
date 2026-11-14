@@ -5,14 +5,17 @@ namespace App\Http\Controllers;
 use App\Models\EmpresasConveniadas;
 use App\Models\Estagio;
 use App\Models\Presenca;
-use App\Models\Supervisor;
 use App\Models\Usuario;
+use App\Services\AdminDashboardService;
 use App\Services\EstagioService;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    public function __construct(private readonly EstagioService $estagioService) {}
+    public function __construct(
+        private readonly EstagioService $estagioService,
+        private readonly AdminDashboardService $adminDashboardService,
+    ) {}
 
     public function show(Request $request)
     {
@@ -63,6 +66,8 @@ class DashboardController extends Controller
             $dados['frequenciasPendentes'] = $estagios->sum(fn (Estagio $estagio) =>
                 $estagio->presencas->where('status', Presenca::STATUS_PENDENTE)->count()
             );
+        } elseif ($usuario->tipo === 'administrador') {
+            $dados = array_merge($dados, $this->adminDashboardService->getDashboardData($request));
         }
 
         return view('dashboard', $dados);

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Services\UsuarioService;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\DB;
 
 class Usuario extends Model
@@ -11,8 +12,26 @@ class Usuario extends Model
     protected $table = 'usuarios';
     protected $primaryKey = 'user_ID';
     public $timestamps = false;
-    protected $fillable = ['Nome', 'Email', 'Senha', 'cpf', 'atribuicao_id'];
-    protected $appends = ['tipo', 'atribuicao', 'matricula', 'siape', 'curso'];
+    protected $fillable = ['Nome', 'Email', 'Senha', 'cpf', 'atribuicao_id', 'ativo'];
+    protected $casts = [
+        'ativo' => 'boolean',
+    ];
+    protected $appends = ['tipo', 'atribuicao', 'matricula', 'siape', 'curso', 'status_texto', 'ativo_badge_class'];
+
+    public function aluno(): HasOne
+    {
+        return $this->hasOne(Aluno::class, 'user_id', 'user_ID');
+    }
+
+    public function orientador(): HasOne
+    {
+        return $this->hasOne(Orientador::class, 'user_ID', 'user_ID');
+    }
+
+    public function supervisor(): HasOne
+    {
+        return $this->hasOne(Supervisor::class, 'user_ID', 'user_ID');
+    }
 
     public function getTipoAttribute(): string
     {
@@ -47,6 +66,18 @@ class Usuario extends Model
         return DB::table('orientadores')
             ->where('user_ID', $this->user_ID)
             ->value('siape');
+    }
+
+    public function getStatusTextoAttribute(): string
+    {
+        return ($this->ativo ?? true) ? 'Ativo' : 'Inativo';
+    }
+
+    public function getAtivoBadgeClassAttribute(): string
+    {
+        return ($this->ativo ?? true)
+            ? 'bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-300'
+            : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400';
     }
 
     public function setCpfAttribute($value): void

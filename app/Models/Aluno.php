@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Aluno extends Usuario
@@ -11,6 +12,11 @@ class Aluno extends Usuario
     public $incrementing = false;
     public $timestamps = true;
     protected $fillable = ['user_id', 'nome', 'matricula', 'curso', 'orientador'];
+
+    public function usuario(): BelongsTo
+    {
+        return $this->belongsTo(Usuario::class, 'user_id', 'user_ID');
+    }
 
     public function estagios(): HasMany
     {

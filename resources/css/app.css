@@ -1,6 +1,9 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 
+/* Dark mode via class (not media query) for Tailwind v4 */
+@variant dark (&:where(.dark, .dark *));
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
@@ -214,3 +217,87 @@
 .bg-primary {
     background-color: var(--primary);
 }
+
+/* ------------------------------------------------------------------ */
+/* Dark mode — elementos globais                                        */
+/* ------------------------------------------------------------------ */
+.dark body {
+    background-color: #111827;
+    color: #f1f5f9;
+}
+
+/* Inputs e Selects em dark mode */
+.dark input:not([type='checkbox']):not([type='radio']),
+.dark textarea,
+.dark select {
+    background-color: #1f2937;
+    border-color: #374151;
+    color: #f1f5f9;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+    color: #6b7280;
+}
+
+/* Focus em dark mode */
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+    border-color: #0077fc;
+    --tw-ring-color: rgba(0, 119, 252, 0.3);
+}
+
+/* Tabelas em dark mode */
+.dark table {
+    color: #d1d5db;
+}
+
+.dark thead {
+    background-color: #1f2937;
+}
+
+.dark thead th {
+    color: #9ca3af;
+}
+
+.dark tbody tr:hover {
+    background-color: rgba(55, 65, 81, 0.5);
+}
+
+/* Paginação do Laravel em dark mode */
+.dark nav[role='navigation'] span,
+.dark nav[role='navigation'] a {
+    background-color: #1f2937;
+    border-color: #374151;
+    color: #9ca3af;
+}
+
+.dark nav[role='navigation'] a:hover {
+    background-color: #374151;
+    color: #f1f5f9;
+}
+
+/* Footer */
+.dark footer {
+    background-color: #1f2937;
+    border-color: #374151;
+}
+
+/* Seção de zona de perigo */
+.dark .bg-red-50 {
+    background-color: #450a0a;
+}
+
+.dark .border-red-200 {
+    border-color: #7f1d1d;
+}
+
+.dark .text-red-900 {
+    color: #fca5a5;
+}
+
+.dark .text-red-800 {
+    color: #fca5a5;
+}
+

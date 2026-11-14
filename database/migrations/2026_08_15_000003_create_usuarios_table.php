@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('Email', 45)->unique();
             $table->string('Senha', 255);
             $table->unsignedInteger('atribuicao_id')->nullable();
+            $table->boolean('ativo')->default(true);
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable();
 
@@ -33,6 +34,7 @@ return new class extends Migration
             'Email' => 'admin@admin.com',
             'Senha' => Hash::make('cefet123'),
             'atribuicao_id' => 1,
+            'ativo' => true,
             'created_at' => now(),
         ]);
     }
