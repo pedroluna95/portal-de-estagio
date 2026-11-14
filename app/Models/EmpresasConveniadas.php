@@ -133,4 +133,21 @@ class EmpresasConveniadas extends Model
 
         return '';
     }
+
+    /**
+     * Retorna a paleta visual (bg e texto) para o card da empresa.
+     */
+    public function getCorCardAttribute(): array
+    {
+        $paleta = [
+            ['bg' => 'bg-blue-100', 'txt' => 'text-blue-700'],
+            ['bg' => 'bg-green-100', 'txt' => 'text-green-700'],
+            ['bg' => 'bg-purple-100', 'txt' => 'text-purple-700'],
+            ['bg' => 'bg-orange-100', 'txt' => 'text-orange-700'],
+            ['bg' => 'bg-indigo-100', 'txt' => 'text-indigo-700'],
+            ['bg' => 'bg-teal-100', 'txt' => 'text-teal-700'],
+        ];
+
+        return $paleta[$this->id % count($paleta)];
+    }
 }

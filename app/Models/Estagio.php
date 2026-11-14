@@ -57,4 +57,29 @@ class Estagio extends Model
     {
         return $this->hasMany(Presenca::class, 'estagio_id');
     }
+
+    /**
+     * Retorna o status efetivo considerando a data de término.
+     */
+    public function getStatusEfetivoAttribute(): string
+    {
+        if ($this->status === self::STATUS_ATIVO && $this->data_fim && $this->data_fim->isPast() && ! $this->data_fim->isToday()) {
+            return self::STATUS_FINALIZADO;
+        }
+
+        return (string) $this->status;
+    }
+
+    /**
+     * Retorna as classes Tailwind para o badge de status.
+     */
+    public function getStatusBadgeClassAttribute(): string
+    {
+        return match ($this->status_efetivo) {
+            self::STATUS_ATIVO => 'bg-green-100 text-green-700',
+            self::STATUS_FINALIZADO => 'bg-gray-100 text-gray-700',
+            self::STATUS_CANCELADO => 'bg-red-100 text-red-700',
+            default => 'bg-amber-100 text-amber-700',
+        };
+    }
 }

@@ -16,7 +16,7 @@
             <div class="card-figma rounded-xl p-6 shadow-sm border border-gray-200 bg-white group-hover:border-[#0077fc] transition-all">
                 <div class="inline-flex p-3 rounded-lg bg-green-50 text-green-600 mb-4"><span class="material-symbols-outlined">business</span></div>
                 <h3 class="text-sm text-gray-600 mb-1 group-hover:text-[#0077fc] font-medium">Empresas Conveniadas</h3>
-                <p class="text-2xl font-bold text-gray-900">{{ number_format($total_empresas ?? \App\Models\EmpresasConveniadas::count(), 0, ',', '.') }}</p>
+                <p class="text-2xl font-bold text-gray-900">{{ number_format($total_empresas ?? 0, 0, ',', '.') }}</p>
                 <p class="text-xs text-gray-500 mt-1">Clique para importar PDF ou consultar</p>
             </div>
         </a>

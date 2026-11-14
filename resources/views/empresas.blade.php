@@ -101,27 +101,13 @@
     </div>
 
     {{-- Grid de empresas reais --}}
-    @php
-        $paleta = [
-            ['bg' => 'bg-blue-100', 'txt' => 'text-blue-700'],
-            ['bg' => 'bg-green-100', 'txt' => 'text-green-700'],
-            ['bg' => 'bg-purple-100', 'txt' => 'text-purple-700'],
-            ['bg' => 'bg-orange-100', 'txt' => 'text-orange-700'],
-            ['bg' => 'bg-indigo-100', 'txt' => 'text-indigo-700'],
-            ['bg' => 'bg-teal-100', 'txt' => 'text-teal-700'],
-        ];
-    @endphp
-
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         @forelse($empresas as $empresa)
-            @php
-                $cor = $paleta[$empresa->id % count($paleta)];
-            @endphp
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md hover:border-[#0077fc] transition-all flex flex-col justify-between">
                 <div class="p-6">
                     <div class="flex items-center justify-between mb-3 gap-2">
-                        <div class="w-12 h-12 rounded-xl {{ $cor['bg'] }} flex items-center justify-center flex-shrink-0">
-                            <span class="material-symbols-outlined {{ $cor['txt'] }} text-[24px]">business</span>
+                        <div class="w-12 h-12 rounded-xl {{ $empresa->cor_card['bg'] }} flex items-center justify-center flex-shrink-0">
+                            <span class="material-symbols-outlined {{ $empresa->cor_card['txt'] }} text-[24px]">business</span>
                         </div>
                         @if($empresa->isVigente())
                             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">

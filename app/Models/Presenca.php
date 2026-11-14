@@ -69,4 +69,36 @@ class Presenca extends Model
 
         return round($this->minutos / 60, 2);
     }
+
+    /**
+     * Retorna a cor de texto para o status/modo da presença.
+     */
+    public function getCorStatusAttribute(): string
+    {
+        if ($this->modo === self::MODO_PESSOAL) {
+            return 'text-blue-700';
+        }
+
+        return match ($this->status) {
+            self::STATUS_APROVADA => 'text-green-700',
+            self::STATUS_RECUSADA => 'text-red-700',
+            default => 'text-amber-700',
+        };
+    }
+
+    /**
+     * Retorna as classes Tailwind para o badge do registro de presença.
+     */
+    public function getBadgeClassAttribute(): string
+    {
+        if ($this->modo === self::MODO_PESSOAL) {
+            return 'bg-blue-100 text-blue-700';
+        }
+
+        return match ($this->status) {
+            self::STATUS_APROVADA => 'bg-green-100 text-green-700',
+            self::STATUS_RECUSADA => 'bg-red-100 text-red-700',
+            default => 'bg-amber-100 text-amber-700',
+        };
+    }
 }

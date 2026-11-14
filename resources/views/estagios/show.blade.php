@@ -94,9 +94,8 @@
     <section class="rounded-xl border border-gray-200 bg-white p-6 text-gray-900 shadow-sm">
         <h2 class="text-lg font-semibold text-gray-900">Jornada do estágio</h2>
         @if($estagio->jornada)
-            @php($diasSelecionados = collect(['segunda' => 'Segunda', 'terca' => 'Terça', 'quarta' => 'Quarta', 'quinta' => 'Quinta', 'sexta' => 'Sexta', 'sabado' => 'Sábado', 'domingo' => 'Domingo'])->filter(fn ($nome, $dia) => $estagio->jornada->{$dia})->values())
             <p class="mt-2 text-sm text-gray-700">{{ $estagio->jornada->horas_diarias }}h por dia · {{ $estagio->jornada->cargaSemanal() }}h por semana</p>
-            <p class="mt-1 text-sm text-gray-500">{{ $diasSelecionados->implode(', ') }}</p>
+            <p class="mt-1 text-sm text-gray-500">{{ implode(', ', $estagio->jornada->dias_ativos_nomes) }}</p>
     @elseif($papel === 'supervisor' && $estagio->status === 'ativo')
             <form method="POST" action="{{ route('estagios.jornada.store', $estagio) }}" class="mt-4 space-y-4">
                 @csrf
@@ -158,11 +157,10 @@
                 <h2 class="text-lg font-semibold text-gray-900">Histórico recente</h2>
                 <div class="mt-4 space-y-3">
                     @forelse($estagio->presencas->take(5) as $presencaRecente)
-                        @php($corRegistro = $presencaRecente->modo === 'pessoal' ? 'text-blue-700' : ($presencaRecente->status === 'aprovada' ? 'text-green-700' : ($presencaRecente->status === 'recusada' ? 'text-red-700' : 'text-amber-700')))
                         <div class="border-b border-gray-100 pb-3 last:border-0">
                             <div class="flex items-start justify-between gap-2">
                                 <p class="text-sm font-medium text-gray-900">{{ $presencaRecente->data->format('d/m/Y') }}</p>
-                                <span class="text-xs font-medium {{ $corRegistro }}">{{ $presencaRecente->modo === 'pessoal' ? 'Pessoal' : ($presencaRecente->status === 'pendente' ? 'Aguardando supervisor' : ucfirst($presencaRecente->status)) }}</span>
+                                <span class="text-xs font-medium {{ $presencaRecente->cor_status }}">{{ $presencaRecente->modo === 'pessoal' ? 'Pessoal' : ($presencaRecente->status === 'pendente' ? 'Aguardando supervisor' : ucfirst($presencaRecente->status)) }}</span>
                             </div>
                             <p class="mt-1 text-xs text-gray-500">{{ $estagioService->formatarMinutos($presencaRecente->minutos) }} atribuídas</p>
                         </div>

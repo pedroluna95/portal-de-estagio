@@ -54,13 +54,12 @@
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         @foreach($estagios as $estagio)
-                            @php($statusExibido = $estagio->status === 'ativo' && $estagio->data_fim->toDateString() < today()->toDateString() ? 'finalizado' : $estagio->status)
                             <tr>
                                 <td class="py-3 pr-4 font-medium text-gray-900">{{ $estagio->aluno->nome }}</td>
                                 <td class="py-3 pr-4 text-gray-600">{{ $estagio->local }}</td>
                                 <td class="py-3 pr-4 text-gray-600">{{ $estagio->data_inicio->format('d/m/Y') }} a {{ $estagio->data_fim->format('d/m/Y') }}</td>
                                 <td class="py-3 pr-4">
-                                    <span class="inline-flex rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold capitalize text-blue-800">{{ $statusExibido }}</span>
+                                    <span class="inline-flex rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold capitalize text-blue-800">{{ $estagio->status_efetivo }}</span>
                                 </td>
                                 <td class="py-3 pr-4 text-gray-600">{{ $estagio->presencas->where('status', 'pendente')->count() }}</td>
                                 <td class="py-3"><a href="{{ route('estagios.show', $estagio) }}" class="font-medium text-[#0056c9] hover:underline">Acompanhar</a></td>

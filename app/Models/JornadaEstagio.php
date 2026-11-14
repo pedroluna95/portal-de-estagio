@@ -68,4 +68,29 @@ class JornadaEstagio extends Model
 
         return $dia !== null && (bool) $this->{$dia};
     }
+
+    /**
+     * Retorna a lista com o nome por extenso dos dias em que há estágio.
+     */
+    public function getDiasAtivosNomesAttribute(): array
+    {
+        $diasMapa = [
+            'segunda' => 'Segunda',
+            'terca'   => 'Terça',
+            'quarta'  => 'Quarta',
+            'quinta'  => 'Quinta',
+            'sexta'   => 'Sexta',
+            'sabado'  => 'Sábado',
+            'domingo' => 'Domingo',
+        ];
+
+        $ativos = [];
+        foreach ($diasMapa as $campo => $nome) {
+            if ($this->{$campo}) {
+                $ativos[] = $nome;
+            }
+        }
+
+        return $ativos;
+    }
 }

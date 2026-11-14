@@ -80,13 +80,12 @@
                         </thead>
                         <tbody class="divide-y divide-gray-100">
                             @foreach($estagios as $estagio)
-                                @php($statusExibido = $estagio->status === 'ativo' && $estagio->data_fim->toDateString() < today()->toDateString() ? 'finalizado' : $estagio->status)
                                 <tr>
                                     <td class="px-4 py-3 font-medium text-gray-900">{{ $estagio->aluno->nome }}</td>
                                     <td class="px-4 py-3 text-gray-600">{{ $estagio->local }}</td>
                                     <td class="px-4 py-3 text-gray-600">{{ $estagio->supervisor?->usuario?->Nome ?? 'Não definido' }}</td>
                                     <td class="px-4 py-3 text-gray-600">{{ $estagio->data_inicio->format('d/m/Y') }} a {{ $estagio->data_fim->format('d/m/Y') }}</td>
-                                    <td class="px-4 py-3 capitalize text-gray-600">{{ $statusExibido }}</td>
+                                    <td class="px-4 py-3 capitalize text-gray-600">{{ $estagio->status_efetivo }}</td>
                                     <td class="px-4 py-3"><a class="font-medium text-[#0056c9] hover:underline" href="{{ route('estagios.show', $estagio) }}">Acompanhar</a></td>
                                 </tr>
                             @endforeach
@@ -169,10 +168,9 @@
                 <h2 class="mb-3 text-lg font-semibold text-gray-900">Histórico de estágios</h2>
                 <div class="divide-y divide-gray-100 rounded-xl border border-gray-200 bg-white px-5 text-gray-900 shadow-sm">
                     @foreach($estagios as $estagio)
-                        @php($statusExibido = $estagio->status === 'ativo' && $estagio->data_fim->toDateString() < today()->toDateString() ? 'finalizado' : $estagio->status)
                         <div class="flex flex-wrap items-center justify-between gap-3 py-4">
                             <div>
-                                <p class="font-medium text-gray-900">{{ $estagio->local }} <span class="ml-2 text-xs capitalize text-gray-500">{{ $statusExibido }}</span></p>
+                                <p class="font-medium text-gray-900">{{ $estagio->local }} <span class="ml-2 text-xs capitalize text-gray-500">{{ $estagio->status_efetivo }}</span></p>
                                 <p class="text-sm text-gray-600">{{ $estagio->data_inicio->format('d/m/Y') }} a {{ $estagio->data_fim->format('d/m/Y') }} · {{ $estagio->orientador->usuario->Nome }}</p>
                                 @if($estagio->jornada)
                                     @php($resumoEstagio = $metricas[$estagio->id])
