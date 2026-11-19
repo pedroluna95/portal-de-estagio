@@ -41,15 +41,15 @@ Route::post('/logout', [LoginController::class, 'logout'])
 Route::get('/cadastro/{tipo?}', [RegisterController::class, 'showRegistrationForm'])->name('cadastro');
 Route::post('/cadastro', [RegisterController::class, 'register']);
 
+// Rotas Públicas (acessíveis sem login)
+Route::view('/tutorial', 'aluno.tutorial')->name('tutorial');
+Route::get('/empresas', [EmpresaController::class, 'index'])->name('empresas.index');
+
 // Rotas Autenticadas (Alunos, Professores, Orientadores, Supervisores)
 Route::middleware(['web', SessionAuthMiddleware::class])->group(function () {
     Route::redirect('/aluno', '/dashboard');
-    Route::view('/tutorial', 'aluno.tutorial')->name('tutorial');
     Route::get('/perfil', [PerfilController::class, 'show'])->name('perfil');
     Route::get('/dashboard', [DashboardController::class, 'show'])->name('dashboard');
-
-    // Empresas conveniadas (visão do usuário)
-    Route::get('/empresas', [EmpresaController::class, 'index'])->name('empresas.index');
 
     // Gestão de Estágios e Presenças
     Route::get('/controle-horas', [EstagioController::class, 'index'])->name('controle-horas');

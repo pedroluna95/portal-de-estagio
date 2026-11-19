@@ -2,68 +2,115 @@
 
 @section('content')
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<main class="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
-    <a href="/admin/usuarios" class="mb-5 inline-flex items-center gap-1 text-sm font-medium text-[#0056c9] hover:underline">
-        <span class="material-symbols-outlined text-lg">arrow_back</span>Voltar aos usuários
+<main class="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8 space-y-6">
+
+    <a href="/admin/usuarios" class="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline">
+        <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+        Voltar à lista de usuários
     </a>
-    <header class="mb-6">
-        <p class="text-sm font-medium text-[#0056c9]">Administração</p>
-        <h1 class="mt-1 text-2xl font-bold text-gray-900">Editar usuário</h1>
-        <p class="mt-1 text-sm text-gray-600">Atualize o cadastro. Deixe a senha em branco para mantê-la.</p>
+
+    <header class="border-b border-slate-200 dark:border-slate-800 pb-5">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-200/60 dark:border-blue-900/40 mb-2">
+            Administração
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">Editar Usuário</h1>
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Atualize as informações cadastrais. Deixe a senha em branco caso não queira alterá-la.</p>
     </header>
 
-    <section class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm sm:p-7">
-        <form id="usuario-form" data-user-id="{{ request()->segment(3) }}" class="space-y-5">
-            <div id="usuario-loading" class="text-sm text-gray-500" role="status">Carregando dados do usuário...</div>
-            <div id="usuario-fields" class="hidden grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <label class="text-sm font-medium text-gray-700 sm:col-span-2">Nome completo
-                    <input name="nome" id="nome" autocomplete="name" class="mt-1.5 block w-full rounded-lg border-gray-300 text-sm focus:border-[#0077fc] focus:ring-[#0077fc]" required />
-                </label>
-                <label class="text-sm font-medium text-gray-700 sm:col-span-2">E-mail
-                    <input name="email" id="email" type="email" autocomplete="email" class="mt-1.5 block w-full rounded-lg border-gray-300 text-sm focus:border-[#0077fc] focus:ring-[#0077fc]" required />
-                </label>
-                <label class="text-sm font-medium text-gray-700">Nova senha (opcional)
-                    <input name="senha" id="senha" type="password" autocomplete="new-password" class="mt-1.5 block w-full rounded-lg border-gray-300 text-sm focus:border-[#0077fc] focus:ring-[#0077fc]" />
-                </label>
-                <label class="text-sm font-medium text-gray-700">CPF
-                    <input name="cpf" id="cpf" inputmode="numeric" pattern="[0-9]*" maxlength="11" placeholder="Somente números" class="mt-1.5 block w-full rounded-lg border-gray-300 text-sm focus:border-[#0077fc] focus:ring-[#0077fc]" />
-                </label>
-                <label class="text-sm font-medium text-gray-700 sm:col-span-2">Perfil
-                <select name="tipo" id="tipo" class="mt-1.5 block w-full rounded-lg border-gray-300 text-sm focus:border-[#0077fc] focus:ring-[#0077fc]">
-                    <option value="aluno">Aluno</option>
-                    <option value="supervisor">Supervisor</option>
-                    <option value="orientador">Orientador</option>
-                </select>
-                </label>
-                <div id="matricula-group" class="hidden">
-                    <label class="text-sm font-medium text-gray-700">Matrícula
-                        <input name="matricula" id="matricula" maxlength="30" class="mt-1.5 block w-full rounded-lg border-gray-300 text-sm focus:border-[#0077fc] focus:ring-[#0077fc]" />
+    <section class="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 shadow-sm">
+        <form id="usuario-form" data-user-id="{{ request()->segment(3) }}" class="space-y-6">
+            <div id="usuario-loading" class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 py-6" role="status">
+                <span class="material-symbols-outlined animate-spin text-blue-600">sync</span>
+                Carregando dados do usuário...
+            </div>
+
+            <div id="usuario-fields" class="hidden grid grid-cols-1 gap-5 sm:grid-cols-2">
+                <div class="sm:col-span-2">
+                    <label for="nome" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                        Nome Completo *
                     </label>
+                    <input name="nome" id="nome" autocomplete="name"
+                           class="block w-full rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 py-2.5 px-3.5 text-sm focus:border-blue-500 focus:ring-blue-500" required />
                 </div>
+
+                <div class="sm:col-span-2">
+                    <label for="email" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                        E-mail *
+                    </label>
+                    <input name="email" id="email" type="email" autocomplete="email"
+                           class="block w-full rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 py-2.5 px-3.5 text-sm focus:border-blue-500 focus:ring-blue-500" required />
+                </div>
+
+                <div>
+                    <label for="senha" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                        Nova Senha (opcional)
+                    </label>
+                    <input name="senha" id="senha" type="password" autocomplete="new-password" placeholder="Deixe em branco para manter"
+                           class="block w-full rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 py-2.5 px-3.5 text-sm focus:border-blue-500 focus:ring-blue-500 placeholder-slate-400" />
+                </div>
+
+                <div>
+                    <label for="cpf" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                        CPF *
+                    </label>
+                    <input name="cpf" id="cpf" inputmode="numeric" pattern="[0-9]*" maxlength="11"
+                           class="block w-full rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 py-2.5 px-3.5 text-sm focus:border-blue-500 focus:ring-blue-500" required />
+                </div>
+
+                <div class="sm:col-span-2">
+                    <label for="tipo" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                        Perfil de Acesso *
+                    </label>
+                    <select name="tipo" id="tipo" class="block w-full rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 py-2.5 px-3.5 text-sm focus:border-blue-500 focus:ring-blue-500">
+                        <option value="aluno">Aluno</option>
+                        <option value="supervisor">Supervisor de Empresa</option>
+                        <option value="orientador">Professor Orientador</option>
+                    </select>
+                </div>
+
+                <div id="matricula-group" class="hidden">
+                    <label for="matricula" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                        Matrícula do Aluno
+                    </label>
+                    <input name="matricula" id="matricula" maxlength="30"
+                           class="block w-full rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 py-2.5 px-3.5 text-sm focus:border-blue-500 focus:ring-blue-500" />
+                </div>
+
                 <div id="curso-group" class="hidden">
-                    <label class="text-sm font-medium text-gray-700">Curso
-                    <select name="curso" id="curso" class="mt-1.5 block w-full rounded-lg border-gray-300 text-sm focus:border-[#0077fc] focus:ring-[#0077fc]">
+                    <label for="curso" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                        Curso
+                    </label>
+                    <select name="curso" id="curso" class="block w-full rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 py-2.5 px-3.5 text-sm focus:border-blue-500 focus:ring-blue-500">
                         <option value="">Selecione o curso</option>
                         <option value="Informatica">Informática</option>
                         <option value="Automacao Industrial">Automação Industrial</option>
                         <option value="Telecomunicações">Telecomunicações</option>
                         <option value="Enfermagem">Enfermagem</option>
                     </select>
-                    </label>
                 </div>
-                <div id="siape-group" class="hidden">
-                    <label class="text-sm font-medium text-gray-700">SIAPE
-                        <input name="siape" id="siape" placeholder="8 dígitos" inputmode="numeric" pattern="[0-9]*" maxlength="8" class="mt-1.5 block w-full rounded-lg border-gray-300 text-sm focus:border-[#0077fc] focus:ring-[#0077fc]" />
+
+                <div id="siape-group" class="hidden sm:col-span-2">
+                    <label for="siape" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                        SIAPE do Orientador
                     </label>
+                    <input name="siape" id="siape" placeholder="8 dígitos" inputmode="numeric" pattern="[0-9]*" maxlength="8"
+                           class="block w-full rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 py-2.5 px-3.5 text-sm focus:border-blue-500 focus:ring-blue-500" />
                 </div>
             </div>
-            <div class="flex flex-col-reverse gap-3 border-t border-gray-100 pt-5 sm:flex-row sm:justify-end">
-                <a href="/admin/usuarios" class="inline-flex justify-center rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50">Cancelar</a>
-                <button type="submit" disabled class="inline-flex justify-center rounded-lg bg-[#0077fc] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#0056c9] disabled:cursor-not-allowed disabled:opacity-50">Salvar alterações</button>
+
+            <div class="flex flex-col-reverse gap-3 border-t border-slate-200 dark:border-slate-800 pt-6 sm:flex-row sm:justify-end">
+                <a href="/admin/usuarios" class="inline-flex justify-center rounded-xl border border-slate-300 dark:border-slate-700 px-5 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                    Cancelar
+                </a>
+                <button type="submit" disabled
+                        class="inline-flex justify-center items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 text-sm font-semibold shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                    <span class="material-symbols-outlined text-[18px]">check</span>
+                    Salvar Alterações
+                </button>
             </div>
         </form>
     </section>
 </main>
 
-<script src="/js/admin-usuarios.js?v=2"></script>
+<script src="/js/admin-usuarios.js?v=3"></script>
 @endsection

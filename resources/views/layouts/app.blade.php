@@ -3,7 +3,9 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Portal Estágio CEFET</title>
+    <title>NEXO - Portal de Estágio</title>
+    <link rel="icon" type="image/png" href="{{ asset('documents/Nexo_Logo.png') }}"/>
+    <link rel="apple-touch-icon" href="{{ asset('documents/Nexo_Logo.png') }}"/>
 
     {{-- Anti-FOUC: aplica tema antes do render --}}
     <script>
@@ -27,7 +29,7 @@
     @include('partials.header')
     @yield('content')
     @include('partials.footer')
-    <script src="/js/password-toggle.js?v=1"></script>
+    <script src="/js/password-toggle.js?v=2"></script>
     <script src="/js/theme-toggle.js?v=1"></script>
 </body>
 </html>

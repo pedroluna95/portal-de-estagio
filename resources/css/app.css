@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 
-/* Dark mode via class (not media query) for Tailwind v4 */
+/* Dark mode via classe '.dark' para Tailwind CSS v4 */
 @variant dark (&:where(.dark, .dark *));
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -12,292 +12,249 @@
 
 @theme {
     --color-primary: #0077fc;
-    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --color-primary-dark: #0056c9;
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 :root {
     --primary: #0077fc;
     --primary-dark: #0056c9;
-    --background-light: #ffffff;
-    --background-dark: #111827;
+    --primary-glow: rgba(0, 119, 252, 0.25);
+    --bg-light: #f8fafc;
+    --card-light: #ffffff;
+    --border-light: #e2e8f0;
+}
+
+.dark {
+    --bg-dark: #0b1120;
+    --card-dark: #111827;
+    --border-dark: #1f293d;
 }
 
 @layer base {
+    * {
+        border-color: var(--border-light);
+    }
+    .dark * {
+        border-color: #1f2937;
+    }
+
     body {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        background-color: var(--background-light);
-        color: #111827;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background-color: #f8fafc;
+        color: #0f172a;
         min-height: 100vh;
         margin: 0;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        display: flex;
+        flex-direction: column;
     }
 
     .dark body {
-        background-color: var(--background-dark);
+        background-color: #0b1120;
         color: #f1f5f9;
     }
 
-    header {
-        background-color: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(12px);
-        border-bottom: 1px solid #e2e8f0;
+    /* Scrollbar elegante */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
     }
-
-    .dark header {
-        background-color: rgba(17, 24, 39, 0.85);
-        border-bottom: 1px solid #1e293b;
+    ::-webkit-scrollbar-track {
+        background: transparent;
     }
-
-    a[href],
-    button,
-    [role='button'],
-    summary,
-    input[type='submit'],
-    input[type='button'] {
-        cursor: pointer;
-        transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease, background-color 0.22s ease, color 0.22s ease, opacity 0.22s ease;
+    ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 9999px;
     }
-
-    a[href]:hover,
-    button:hover,
-    [role='button']:hover,
-    summary:hover,
-    input[type='submit']:hover,
-    input[type='button']:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 8px 20px rgba(0, 119, 252, 0.08);
+    .dark ::-webkit-scrollbar-thumb {
+        background: #334155;
     }
-
-    a[href]:active,
-    button:active,
-    [role='button']:active,
-    summary:active,
-    input[type='submit']:active,
-    input[type='button']:active {
-        transform: scale(0.98);
+    ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
     }
-
-    a[href]:focus-visible,
-    button:focus-visible,
-    [role='button']:focus-visible,
-    summary:focus-visible,
-    input:focus-visible,
-    select:focus-visible,
-    textarea:focus-visible {
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(0, 119, 252, 0.16);
+    .dark ::-webkit-scrollbar-thumb:hover {
+        background: #475569;
     }
 }
 
 @layer components {
+    /* Gradiente moderno oficial Nexo */
     .fig-gradient {
-        background: linear-gradient(to bottom right, #0077fc, #0056c9);
+        background: linear-gradient(135deg, #0077fc 0%, #0056c9 100%);
     }
 
-    .btn-pill {
-        border-radius: 9999px;
-        font-weight: 700;
-        padding: 0.75rem 2rem;
-        transition: transform 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease, border-color 0.22s ease, background-color 0.22s ease, color 0.22s ease;
+    .dark .fig-gradient {
+        background: linear-gradient(135deg, #0060d1 0%, #00439e 100%);
     }
 
-    .btn-pill-primary {
-        background: linear-gradient(to right, #0077fc, #0056c9);
-        color: white;
-        box-shadow: 0 10px 25px -5px rgba(0, 119, 252, 0.35);
-    }
-
-    .btn-pill-primary:hover {
-        filter: brightness(1.05);
-        transform: translateY(-1px);
-        border-color: rgba(255, 255, 255, 0.2);
-        box-shadow: 0 12px 24px rgba(0, 119, 252, 0.22);
-    }
-
-    .btn-pill-secondary {
-        background-color: #f3f4f6;
-        color: #111827;
-        border: 1px solid transparent;
-    }
-
-    .dark .btn-pill-secondary {
-        background-color: #374151;
-        color: #f9fafb;
-    }
-
-    .btn-pill-secondary:hover {
-        background-color: #e5e7eb;
-        border-color: rgba(0, 119, 252, 0.2);
-        box-shadow: 0 8px 20px rgba(0, 119, 252, 0.08);
-    }
-
-    .dark .btn-pill-secondary:hover {
-        background-color: #4b5563;
-    }
-
-    .card-figma {
-        background-color: white;
-        border: 1px solid #e5e7eb;
+    /* Cards consistentes com visual SaaS moderno */
+    .card-modern {
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0;
         border-radius: 1rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.04);
-        transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease, background-color 0.22s ease;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .dark .card-modern {
+        background-color: #111827;
+        border-color: #1f2937;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.25);
+    }
+
+    .card-modern-hover:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px -5px rgba(0, 119, 252, 0.12), 0 8px 10px -6px rgba(0, 119, 252, 0.08);
+        border-color: #93c5fd;
+    }
+
+    .dark .card-modern-hover:hover {
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 119, 252, 0.15);
+        border-color: #1e40af;
+    }
+
+    /* Legado mantido para compatibilidade */
+    .card-figma {
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 1rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .dark .card-figma {
-        background-color: #1f2937;
-        border-color: #374151;
+        background-color: #111827;
+        border-color: #1f2937;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
     }
 
     .card-figma:hover {
-        box-shadow: 0 8px 24px rgba(0, 119, 252, 0.10), 0 4px 12px rgba(0, 0, 0, 0.06);
-        border-color: rgba(0, 119, 252, 0.24);
+        border-color: #60a5fa;
         transform: translateY(-2px);
+        box-shadow: 0 10px 20px -5px rgba(0, 119, 252, 0.1);
     }
 
-    .card-figma:active {
-        transform: scale(0.98);
+    .dark .card-figma:hover {
+        border-color: #2563eb;
     }
 
-    .nexo-card,
-    .bg-white.rounded-xl,
-    .bg-white.rounded-2xl,
-    .bg-white.rounded-lg,
-    .bg-white.rounded-md {
-        transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease, background-color 0.22s ease;
+    /* Botões Pill */
+    .btn-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        border-radius: 9999px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        padding: 0.625rem 1.5rem;
+        transition: all 0.2s ease;
     }
 
-    .nexo-card:hover,
-    .bg-white.rounded-xl:hover,
-    .bg-white.rounded-2xl:hover,
-    .bg-white.rounded-lg:hover,
-    .bg-white.rounded-md:hover,
-    .border-gray-200.rounded-lg:hover,
-    .border-gray-200.rounded-xl:hover,
-    .border-gray-200.rounded-2xl:hover {
-        transform: translateY(-2px);
-        border-color: rgba(0, 119, 252, 0.24);
-        box-shadow: 0 8px 24px rgba(0, 119, 252, 0.10), 0 4px 12px rgba(0, 0, 0, 0.06);
+    .btn-pill-primary {
+        background: linear-gradient(135deg, #0077fc 0%, #0056c9 100%);
+        color: #ffffff;
+        box-shadow: 0 4px 14px 0 rgba(0, 119, 252, 0.35);
     }
 
-    .nexo-card:active,
-    .bg-white.rounded-xl:active,
-    .bg-white.rounded-2xl:active,
-    .bg-white.rounded-lg:active,
-    .bg-white.rounded-md:active,
-    .border-gray-200.rounded-lg:active,
-    .border-gray-200.rounded-xl:active,
-    .border-gray-200.rounded-2xl:active {
-        transform: scale(0.98);
+    .btn-pill-primary:hover {
+        filter: brightness(1.08);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(0, 119, 252, 0.45);
     }
 
-    .border-2.border-gray-200.rounded-lg,
-    .border-2.border-gray-200.rounded-xl,
-    .border-2.border-gray-200.rounded-2xl {
-        transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease, background-color 0.22s ease;
+    .btn-pill-secondary {
+        background-color: #ffffff;
+        color: #1e293b;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     }
 
-    .border-2.border-gray-200.rounded-lg:hover,
-    .border-2.border-gray-200.rounded-xl:hover,
-    .border-2.border-gray-200.rounded-2xl:hover {
-        transform: translateY(-2px);
-        border-color: rgba(0, 119, 252, 0.24);
-        box-shadow: 0 8px 24px rgba(0, 119, 252, 0.10), 0 4px 12px rgba(0, 0, 0, 0.06);
+    .dark .btn-pill-secondary {
+        background-color: #1e293b;
+        color: #f8fafc;
+        border-color: #334155;
     }
 
-    .border-2.border-gray-200.rounded-lg:active,
-    .border-2.border-gray-200.rounded-xl:active,
-    .border-2.border-gray-200.rounded-2xl:active {
-        transform: scale(0.98);
+    .btn-pill-secondary:hover {
+        background-color: #f1f5f9;
+        border-color: #cbd5e1;
+        transform: translateY(-1px);
     }
-}
 
-.text-primary {
-    color: var(--primary);
-}
+    .dark .btn-pill-secondary:hover {
+        background-color: #334155;
+        border-color: #475569;
+    }
 
-.bg-primary {
-    background-color: var(--primary);
+    /* Badges de status */
+    .badge-modern {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.25rem 0.625rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        line-height: 1;
+    }
 }
 
 /* ------------------------------------------------------------------ */
-/* Dark mode — elementos globais                                        */
+/* Dark Mode Globais e Controles                                     */
 /* ------------------------------------------------------------------ */
-.dark body {
-    background-color: #111827;
-    color: #f1f5f9;
-}
-
-/* Inputs e Selects em dark mode */
 .dark input:not([type='checkbox']):not([type='radio']),
 .dark textarea,
 .dark select {
-    background-color: #1f2937;
-    border-color: #374151;
-    color: #f1f5f9;
+    background-color: #111827 !important;
+    border-color: #374151 !important;
+    color: #f3f4f6 !important;
 }
 
 .dark input::placeholder,
 .dark textarea::placeholder {
-    color: #6b7280;
+    color: #64748b !important;
 }
 
-/* Focus em dark mode */
 .dark input:focus,
 .dark textarea:focus,
 .dark select:focus {
-    border-color: #0077fc;
-    --tw-ring-color: rgba(0, 119, 252, 0.3);
+    border-color: #0077fc !important;
+    box-shadow: 0 0 0 3px rgba(0, 119, 252, 0.25) !important;
 }
 
-/* Tabelas em dark mode */
 .dark table {
-    color: #d1d5db;
+    color: #e2e8f0;
 }
 
 .dark thead {
-    background-color: #1f2937;
+    background-color: #0f172a !important;
 }
 
 .dark thead th {
-    color: #9ca3af;
+    color: #94a3b8 !important;
+    border-color: #1e293b !important;
+}
+
+.dark tbody tr {
+    border-color: #1e293b !important;
 }
 
 .dark tbody tr:hover {
-    background-color: rgba(55, 65, 81, 0.5);
+    background-color: rgba(30, 41, 59, 0.5) !important;
 }
 
 /* Paginação do Laravel em dark mode */
 .dark nav[role='navigation'] span,
 .dark nav[role='navigation'] a {
-    background-color: #1f2937;
-    border-color: #374151;
-    color: #9ca3af;
+    background-color: #111827 !important;
+    border-color: #374151 !important;
+    color: #94a3b8 !important;
 }
 
 .dark nav[role='navigation'] a:hover {
-    background-color: #374151;
-    color: #f1f5f9;
+    background-color: #1f2937 !important;
+    color: #f8fafc !important;
 }
-
-/* Footer */
-.dark footer {
-    background-color: #1f2937;
-    border-color: #374151;
-}
-
-/* Seção de zona de perigo */
-.dark .bg-red-50 {
-    background-color: #450a0a;
-}
-
-.dark .border-red-200 {
-    border-color: #7f1d1d;
-}
-
-.dark .text-red-900 {
-    color: #fca5a5;
-}
-
-.dark .text-red-800 {
-    color: #fca5a5;
-}
-

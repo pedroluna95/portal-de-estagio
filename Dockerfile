@@ -1,4 +1,4 @@
-```dockerfile
+
 FROM php:8.2-cli
 
 # Dependências do sistema e extensões PHP
@@ -26,7 +26,7 @@ WORKDIR /var/www
 
 # Dependências PHP
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN composer install --no-dev --no-scripts --no-autoloader --no-interaction
 
 # Dependências Node
 COPY package.json package-lock.json ./
@@ -34,6 +34,9 @@ RUN npm ci
 
 # Código do projeto
 COPY . .
+
+# Finaliza o autoloader do Composer com o código presente
+RUN composer dump-autoload --optimize
 
 # Compilação dos arquivos CSS e JS
 RUN npm run build
@@ -45,4 +48,3 @@ RUN chown -R www-data:www-data storage bootstrap/cache \
 EXPOSE 8000
 
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
-```

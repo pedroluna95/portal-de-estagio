@@ -180,7 +180,7 @@
                 Importar Lista de Empresas Conveniadas (PDF)
             </h2>
             <p class="text-sm text-gray-600 mt-1">
-                Selecione o documento PDF fornecido pelo CEFET. O sistema fará a leitura automática das empresas, salvará um arquivo .csv intermediário e persistirá os dados na tabela do portal.
+                Selecione o documento PDF oficial fornecido pela UFCI. O sistema fará a leitura automática das empresas, salvará um arquivo .csv intermediário e persistirá os dados na tabela do portal.
             </p>
         </div>
 
