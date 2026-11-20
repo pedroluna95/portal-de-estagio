@@ -5,9 +5,11 @@ FROM php:8.2-cli
 RUN apt-get update && apt-get install -y \
     git curl zip unzip \
     libzip-dev libonig-dev libxml2-dev \
+    libpng-dev libjpeg-dev libfreetype6-dev \
     python3 python3-pip \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install \
-    pdo pdo_mysql mbstring zip bcmath \
+    pdo pdo_mysql mbstring zip bcmath gd \
     && (pip install --break-system-packages pymupdf || pip install pymupdf || true) \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*

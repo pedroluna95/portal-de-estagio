@@ -123,9 +123,15 @@
                                         </span>
                                     </td>
                                     <td class="px-5 py-3.5 text-right">
-                                        <a href="{{ route('estagios.show', $estagio) }}" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 transition-colors">
-                                            Visualizar
-                                        </a>
+                                        <div class="inline-flex items-center gap-1.5 justify-end">
+                                            <a href="{{ route('estagios.ficha', $estagio) }}" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 transition-colors" title="Baixar Ficha de Frequência em Excel">
+                                                <span class="material-symbols-outlined text-[15px]">download</span>
+                                                Ficha
+                                            </a>
+                                            <a href="{{ route('estagios.show', $estagio) }}" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 transition-colors">
+                                                Visualizar
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
@@ -149,14 +155,20 @@
                             Aluno: <strong class="text-slate-700 dark:text-slate-300">{{ $estagio->aluno->nome }}</strong> · Orientador: {{ $estagio->orientador->usuario->Nome }}
                         </p>
                     </div>
-                    @if($papel === 'orientador' && $estagio->status === 'ativo')
-                        <form method="POST" action="{{ route('estagios.finalizar', $estagio) }}" onsubmit="return confirm('Deseja realmente finalizar este estágio?');">
-                            @csrf
-                            <button class="px-4 py-2 rounded-xl text-xs font-semibold text-rose-600 border border-rose-200 hover:bg-rose-50 transition-colors">
-                                Finalizar Estágio
-                            </button>
-                        </form>
-                    @endif
+                    <div class="flex items-center gap-2">
+                        <a href="{{ route('estagios.ficha', $estagio) }}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-colors" title="Baixar Ficha de Frequência preenchida automaticamente">
+                            <span class="material-symbols-outlined text-[18px]">download</span>
+                            Baixar Ficha (.xlsx)
+                        </a>
+                        @if($papel === 'orientador' && $estagio->status === 'ativo')
+                            <form method="POST" action="{{ route('estagios.finalizar', $estagio) }}" onsubmit="return confirm('Deseja realmente finalizar este estágio?');">
+                                @csrf
+                                <button class="px-4 py-2 rounded-xl text-xs font-semibold text-rose-600 border border-rose-200 hover:bg-rose-50 transition-colors">
+                                    Finalizar Estágio
+                                </button>
+                            </form>
+                        @endif
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mt-5">

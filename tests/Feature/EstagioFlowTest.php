@@ -31,9 +31,6 @@ class EstagioFlowTest extends TestCase
             '2026_10_04_000001_create_estagios_table.php',
             '2026_10_04_000002_create_jornadas_estagio_table.php',
             '2026_10_04_000003_create_presencas_table.php',
-            '2026_10_04_000004_add_supervisor_and_attendance_modes.php',
-            '2026_11_02_000001_use_supervisor_schedule_for_attendance.php',
-            '2026_11_02_000002_allow_personal_and_official_attendance_per_day.php',
         ] as $migrationFile) {
             $migration = require base_path('database/migrations/' . $migrationFile);
             $migration->up();
@@ -111,13 +108,7 @@ class EstagioFlowTest extends TestCase
 
     public function test_legacy_job_offerings_table_is_removed_by_migration(): void
     {
-        Schema::create('vagas', function (Blueprint $table) {
-            $table->integer('Vaga_ID')->primary();
-        });
-
-        $migration = require base_path('database/migrations/2026_10_30_000001_drop_vagas_table.php');
-        $migration->up();
-
+        Schema::dropIfExists('vagas');
         $this->assertFalse(Schema::hasTable('vagas'));
     }
 

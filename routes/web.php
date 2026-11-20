@@ -44,6 +44,7 @@ Route::post('/cadastro', [RegisterController::class, 'register']);
 // Rotas Públicas (acessíveis sem login)
 Route::view('/tutorial', 'aluno.tutorial')->name('tutorial');
 Route::get('/empresas', [EmpresaController::class, 'index'])->name('empresas.index');
+Route::get('/ficha-frequencia', [EstagioController::class, 'downloadMinhaFicha'])->name('ficha.download');
 
 // Rotas Autenticadas (Alunos, Professores, Orientadores, Supervisores)
 Route::middleware(['web', SessionAuthMiddleware::class])->group(function () {
@@ -58,6 +59,9 @@ Route::middleware(['web', SessionAuthMiddleware::class])->group(function () {
     Route::get('/estagios/{estagioId}', [EstagioController::class, 'show'])
         ->whereNumber('estagioId')
         ->name('estagios.show');
+    Route::get('/estagios/{estagioId}/ficha-frequencia', [EstagioController::class, 'downloadFicha'])
+        ->whereNumber('estagioId')
+        ->name('estagios.ficha');
     Route::post('/estagios/{estagioId}/finalizar', [EstagioController::class, 'finalizar'])
         ->whereNumber('estagioId')
         ->name('estagios.finalizar');

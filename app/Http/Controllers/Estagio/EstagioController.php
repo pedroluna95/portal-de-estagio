@@ -8,6 +8,7 @@ use App\Models\Estagio;
 use App\Models\Presenca;
 use App\Models\Supervisor;
 use App\Services\EstagioService;
+use App\Services\FichaFrequenciaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -242,5 +243,37 @@ class EstagioController extends Controller
 
         return redirect()->route('estagios.show', $estagio)
             ->with('success', 'Estágio finalizado. O histórico foi preservado.');
+    }
+
+    public function downloadFicha(Request $request, int $estagioId, FichaFrequenciaService $fichaService)
+    {
+        $estagio = $this->estagioService->estagioAcessivel($request, $estagioId);
+        $ano = $request->query('ano') ? (int) $request->query('ano') : null;
+
+        return $fichaService->downloadResponse($estagio, $ano);
+    }
+
+    public function downloadMinhaFicha(Request $request, FichaFrequenciaService $fichaService)
+    {
+        if (! $request->session()->has('usuario_id')) {
+            return response()->download($fichaService->getTemplatePath());
+        }
+
+        try {
+            $aluno = $this->estagioService->alunoAtual($request);
+            $estagio = $aluno->estagios()
+                ->where('status', Estagio::STATUS_ATIVO)
+                ->latest('data_inicio')
+                ->first()
+                ?? $aluno->estagios()->latest('data_inicio')->first();
+
+            if (! $estagio) {
+                return response()->download($fichaService->getTemplatePath());
+            }
+
+            return $fichaService->downloadResponse($estagio);
+        } catch (\Throwable) {
+            return response()->download($fichaService->getTemplatePath());
+        }
     }
 }

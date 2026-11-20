@@ -38,14 +38,20 @@
                     <span>Período: <strong class="text-slate-700 dark:text-slate-200">{{ $estagio->data_inicio->format('d/m/Y') }} a {{ $estagio->data_fim->format('d/m/Y') }}</strong></span>
                 </div>
             </div>
-            @if($papel === 'orientador' && $estagio->status === 'ativo')
-                <form method="POST" action="{{ route('estagios.finalizar', $estagio) }}" onsubmit="return confirm('Deseja realmente finalizar este estágio? O histórico de presenças será mantido.');">
-                    @csrf
-                    <button class="px-4 py-2 rounded-xl text-xs font-semibold text-rose-600 border border-rose-200 dark:border-rose-900/60 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors">
-                        Finalizar Estágio
-                    </button>
-                </form>
-            @endif
+            <div class="flex flex-wrap items-center gap-2">
+                <a href="{{ route('estagios.ficha', $estagio) }}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-colors" title="Baixar Ficha de Frequência preenchida automaticamente em Excel">
+                    <span class="material-symbols-outlined text-[18px]">download</span>
+                    Baixar Ficha (.xlsx)
+                </a>
+                @if($papel === 'orientador' && $estagio->status === 'ativo')
+                    <form method="POST" action="{{ route('estagios.finalizar', $estagio) }}" onsubmit="return confirm('Deseja realmente finalizar este estágio? O histórico de presenças será mantido.');">
+                        @csrf
+                        <button class="px-4 py-2 rounded-xl text-xs font-semibold text-rose-600 border border-rose-200 dark:border-rose-900/60 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors">
+                            Finalizar Estágio
+                        </button>
+                    </form>
+                @endif
+            </div>
         </div>
 
         {{-- Cards de Metrificação --}}

@@ -10,11 +10,11 @@ class UsuarioServiceTest extends TestCase
     public function test_formatCpf_valid()
     {
         $svc = \App\Services\UsuarioService::class;
-        $result = $svc::formatCpf('12345678910');
-        $this->assertEquals('123.456.789-10', $result);
+        $result = $svc::formatCpf('52998224725');
+        $this->assertEquals('529.982.247-25', $result);
 
-        $result2 = $svc::formatCpf('123.456.789-10');
-        $this->assertEquals('123.456.789-10', $result2);
+        $result2 = $svc::formatCpf('529.982.247-25');
+        $this->assertEquals('529.982.247-25', $result2);
     }
 
     public function test_formatCpf_invalid()
